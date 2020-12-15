@@ -26,11 +26,23 @@ body {
   position: fixed;
 
 }
-
+.body-bground{
+    position: fixed;
+    width: 100%;
+    height: 100%;
+    top: 0;
+    overflow: hidden;
+}
+img.body-bground-img {
+    width: 100%;
+    height: auto;
+    position: relative;
+}
 .container {
   background-color: transparent;
   height: 80000px;
   width: 100%;
+  position: relative; /* place it in front of the bground div w. image */
 }
 
 .stage-view {
