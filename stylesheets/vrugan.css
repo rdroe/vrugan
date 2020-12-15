@@ -28,8 +28,7 @@ body {
 }
 
 .container {
-  background: rgb(2,0,36);
-  background: linear-gradient(124deg, rgba(2,0,36,1) 0%, rgba(56,11,41,0.5) 35%, rgba(0,212,255,1) 100%);
+  background-color: transparent;
   height: 80000px;
   width: 100%;
 }
@@ -38,12 +37,12 @@ body {
   position: fixed;
   width: 80vw;
   height: 80vh;
-  /* pointer-events: none; */
   border-style: dotted;
   border-width: 1px;
+  pointer-events: none;  
 }
 
-.stage-surface {
+.stage-surface { 
   position: relative;
   width: 2400px;
   height: 80vh;
@@ -54,4 +53,8 @@ body {
   width: 300px;
   height: 300px;
   border-style: solid;
+}
+
+.object a {
+  pointer-events: auto;
 }
