@@ -1,0 +1,41 @@
+<!DOCTYPE html>
+<head>
+  <title>davo roe</title>
+  <link href="stylesheets/vrugan.css" rel="stylesheet">
+  <link href="stylesheets/logged-element.css" rel="stylesheet">
+  <meta name='viewport'
+       content='width=device-width, initial-scale=1.0, maximum-scale=1.0,
+       user-scalable=0' >
+  </meta>
+</head>
+<body>
+  <div class="container">
+    <main>
+       <div class="stage-view">
+        <div class="stage-surface">
+         <div class="object one paper"><h1>davo roe</h1></div>
+         <div class="object two paper"><h1><a href="#asdf" >I'm an object!</a></h1></div>
+         <div class="object three paper"><h1>I'm an object!</h1></div>
+         <div class="object four paper"><h1>I'm an object!</h1></div>
+         <div class="object five paper"><h1>I'm an object!</h1></div>
+         <div class="object six paper"><h1>I'm an object!</h1></div>
+        </div>
+       </div>
+    </main>
+    <div class="rect top subgrid-1"></div>
+    <div class="rect side"></div>
+    <div class="text one"></div>
+    <div class="text two"></div>
+  </div>
+  <script type="module" src="./js/vrugan.js"></script>
+  <script type="module" src="/js/logged-element/logged-element.js"></script>
+  <script type="module" src="/js/util/util.js"></script>
+
+  <script type="module">
+    import { qs } from '/js/util/util.js'
+    import { vrugan } from './js/vrugan.js'
+    import { logElem } from './js/logged-element.js'
+    vrugan('body').add('.stage-view', { range: [5000, 15000], factor: 1/30 })
+    logElem(qs('body'))
+  </script>
+</body>

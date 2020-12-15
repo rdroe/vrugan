@@ -1,0 +1,15 @@
+node_modules
+pl-data/*.zip
+**/.DS_Store
+\#*
+**/\#
+.\#*
+*~
+.lgt_tmp
+phconf.lgt
+**/input.txt*
+stanford-corenlp-4.1.0
+*.icloud
+*.awcache
+data
+dist
