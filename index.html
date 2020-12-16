@@ -37,5 +37,6 @@
     vrugan('body')
       .add('.stage-view', { range: [5000, 15000], factor: 1/30 })
     vrugan('body').add('.body-bground', {range: [5000, 15000], factor: 1/60 ,direction: 0 } )
+    vrugan('body').addDoer('.rect.top', {range: [5000, 15000], factor: 1/60 ,direction: 1 }, console.log )
   </script>
 </body>
