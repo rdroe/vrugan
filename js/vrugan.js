@@ -19,9 +19,16 @@ const vrugan2 = (parentSelOrElem) => {
     }
 }
 
+const vwToPx = (vw) => {
+    const num = parseInt(vw)
+    invariant(() => `${num}vw` === vw)
+    return Math.trunc(num / 100 * window.innerWidth)
+}
+
 const PERP = 1
 const PARA = 0
-export const vrugan = (f) => {
+export const vrugan = (f, opts = {}) => {
+
     const lib = {
         verticalDo(par, chVrug, fn) {
 
@@ -80,16 +87,57 @@ export const vrugan = (f) => {
                 const { range, factor, direction } = chParams
 
                 if (direction === PERP) {
-                    if (par.scrollTop > range[0] && par.scrollTop < range[1]) {
-                        const diff = par.scrollTop - range[0]
-                        ch.dataset.scrollLeft = tr(diff * factor)
-                        ch.scrollLeft = ch.dataset.scrollLeft
-                    } else if (par.scrollTop <= range[0]) {
-                        ch.dataset.scrollTop = 0
-                        ch.scrollLeft = 0
-                    } else if (par.scrollTop >= range[1]) {
-                        ch.dataset.scrollLeft = tr((range[1] - range[0]) * factor)
-                        ch.scrollLeft = ch.dataset.scrollLeft
+
+                    if (factor < 0) {
+                        // neg factor means lower (nearer 0) scrollLeft.
+                        // it should have been initialized to high number so we can subtract from it.
+
+
+
+                        let max
+                        max = chVrug.cache.initLeft
+                        let end = chVrug.cache.endLeft || 0
+                        const traversable = max - end
+                        const factor = traversable / (range[1] - range[0])
+                        let start = max
+                        console.log('tmsef', traversable, max, start, end, factor)
+                        // range [1] brings us to 0 scroll.
+                        if (par.scrollTop > range[0] && par.scrollTop < range[1]) {
+
+                            const diff = par.scrollTop - range[0] // progress; a portion of th range
+                            console.log('diff', diff)
+
+                            ch.dataset.scrollLeft = start - tr(diff * factor)
+                            console.log('update', ch.dataset.scrollLeft)
+                            ch.scrollLeft = ch.dataset.scrollLeft
+
+                        } else if (par.scrollTop <= range[0]) {
+                            // scrolled the whole range away to the left.
+                            ch.dataset.scrollLeft = start
+                            ch.scrollLeft = ch.dataset.scrollLeft
+
+                        } else if (par.scrollTop >= range[1]) {
+                            // no scroll ; we are past it.
+                            ch.dataset.scrollLeft = end
+                            // ch.dataset.scrollLeft = tr((range[1] - range[0]) * factor)
+                            ch.scrollLeft = ch.dataset.scrollLeft
+                        }
+
+                        // parent is going downward (higher scrolltop) 
+                    } else {
+                        if (par.scrollTop > range[0] && par.scrollTop < range[1]) {
+
+                            const diff = par.scrollTop - range[0]
+                            ch.dataset.scrollLeft = tr(diff * factor)
+                            ch.scrollLeft = ch.dataset.scrollLeft
+
+                        } else if (par.scrollTop <= range[0]) {
+                            ch.dataset.scrollTop = 0
+                            ch.scrollLeft = 0
+                        } else if (par.scrollTop >= range[1]) {
+                            ch.dataset.scrollLeft = tr((range[1] - range[0]) * factor)
+                            ch.scrollLeft = ch.dataset.scrollLeft
+                        }
                     }
                 } else if (direction === PARA) {
                     const diff = par.scrollTop - range[0]
@@ -139,7 +187,23 @@ export const vrugan = (f) => {
         }
     }
 
-    const elem = qs(f)
+    const elem = qs(f, opts)
+    let initLeft
+    let initTop
+    let endLeft
+    if (opts.init) {
+        if (opts.init.left) {
+            initLeft = vwToPx(opts.init.left)
+
+        }
+        if (opts.init.top) {
+            initTop = vwToPx(opts.init.top)
+        }
+        if (opts.init.endLeft) {
+            endLeft = vwToPx(opts.init.endLeft)
+
+        }
+    }
 
     const scroll = Object.create({
         getChild(chElem) {
@@ -147,6 +211,11 @@ export const vrugan = (f) => {
         },
         children: new Map,
         elem,
+        cache: {
+            initLeft: initLeft || null,
+            initTop: initTop || null,
+            endLeft: endLeft || null
+        },
         get scrollTop() {
             return elem.scrollTop
         },
@@ -166,8 +235,10 @@ export const vrugan = (f) => {
                 this.add(doerSel, { range, factor, direction, sensitiveTo })
             }
         },
-        add(chSel, { range, factor, direction = PERP, sensitiveTo = 'v' }) {
-            const ch = vrugan(chSel)
+
+        add(chSel, { range, factor, direction = PERP, sensitiveTo = 'v' }, opts = { init: {} }) {
+
+            const ch = vrugan(chSel, opts)
             if (this.children.has(ch)) return
             // track this child by placing it in parent's set.  
             this.children.set(ch, { range, factor, direction, sensitiveTo })
@@ -185,6 +256,7 @@ export const vrugan = (f) => {
             lib.react(ch, deltaX, deltaY)
         }
     })
+
     return scroll
 }
 

@@ -1,7 +1,8 @@
 <!DOCTYPE html>
 <head>
   <title>davo roe</title>
-  <link href="stylesheets/vrugan.css" rel="stylesheet">
+  <!-- <link href="stylesheets/vrug.css" rel="stylesheet"> -->
+  <link href="stylesheets/vrugan.css" rel="stylesheet">   
   <meta name="viewport" content="minimum-scale=1">
 </head>
 <body>
@@ -10,18 +11,19 @@
   </div>
   <div class="container">
     <main>
-       <div class="stage-view">
-        <div class="stage-surface">
-         <div class="object one paper"><h1>davo roe</h1></div>
-         <div class="object two paper">
-	   <h1></h1>
-	 </div>
-         <div class="object three paper"><h1>I'm an object!</h1></div>
-         <div class="object four paper"><h1>I'm an object!</h1></div>
-         <div class="object five paper"><h1>I'm an object!</h1></div>
-         <div class="object six paper"><h1>I'm an object!</h1></div>
-        </div>
-       </div>
+      <div class="stage-view one">
+	<div class="stage-surface one">
+	 <div class="paper one">this is some text. i've got text; do you?</div>
+	 <div class="divider one"></div>
+	</div>
+      </div><!-- stage view -->
+      <div class="stage-view two">
+	<div class="stage-surface two">
+	 <div class="paper two">this is some text. i've got text; do you?</div>
+	 <div class="divider two"></div>
+	</div>
+      </div><!-- stage view -->
+      
     </main>
     <div class="rect top subgrid-1"></div>
     <div class="rect side"></div>
@@ -34,9 +36,16 @@
   <script type="module">
     import { qs } from '/js/util/util.js'
     import { vrugan } from './js/vrugan.js'
-    vrugan('body')
-      .add('.stage-view', { range: [5000, 15000], factor: 1/30 })
-    vrugan('body').add('.body-bground', {range: [5000, 15000], factor: 1/60 ,direction: 0 } )
-    vrugan('body').addDoer('.rect.top', {range: [5000, 15000], factor: 1/60 ,direction: 1 }, console.log )
+    import { vrug } from './js/vrug.js'
+    vrug('body').child('.stage-view.one')
+      .scroller('u')
+      .set('start', '0vw')
+    .set('end', '100vw')
+    .set('parentStart', '500vw')
+    .set('parentEnd', '600vw')
+    .listen()
+    
+    qs('.stage-view.one').scrollLeft = vrug.util('100vw').toPx()
+    
   </script>
 </body>

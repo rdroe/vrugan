@@ -3,6 +3,7 @@ pl-data/*.zip
 **/.DS_Store
 \#*
 **/\#
+**/.\#*
 .\#*
 *~
 .lgt_tmp
