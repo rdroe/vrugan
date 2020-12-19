@@ -30,10 +30,11 @@ body::-webkit-scrollbar {
   height: 1600vw;
 }
 
-div { box-sizing: border-box; }
+div {
+    box-sizing: border-box;
+}
 
 .stage-view {
-  
   position: fixed;
   bottom: 0;
   left: 0;
@@ -50,20 +51,26 @@ div { box-sizing: border-box; }
     left: 0;
     bottom: 0;
     overflow: hidden;
+    border-style: dashed;
+    border-width: 2vw;
+    border-color: darkgreen;
 }
 
-.stage-view.two .paper {
+.stage-view.two  {
     visibility: hidden;
 }
+
 .paper.one {
     bottom: 0;
     left: 60%;
 }
+
 .paper {
     position: absolute;
     height: 20vw;
     width: 10vw;
 }
+
 .body-bground > img.body-bground-img {
     width: 100%;
     height: auto;

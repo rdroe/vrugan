@@ -1,7 +1,10 @@
 import { invariant, qs, tr } from '/js/util/util.js'
 
 const dirs = ['l', 'r', 'u', 'd']
+const axes = ['v', 'h']
+
 const [LEFT, RIGHT, UP, DOWN] = dirs
+const [VERTICAL, HORIZONTAL] = axes
 
 export default { LEFT, RIGHT, UP, DOWN }
 
@@ -42,81 +45,89 @@ const scroll = (direction, scrollee, anchorElement, ev) => {
 }
 
 
-const scrollMaker = (dir, id, childEl, el) => {
+const scrollMaker = (id, senses, childEl, el) => {
 
+    const dir = id
     const top = vrugs.get(el)
-    const child = top.children.get(childEl)
-    const sibScrollers = child.scrollers
-    const ownOptions = sibScrollers.has(dir) ? sibScrollers.get(dir).opts : new Map
+
     let thisScroller
+    let opts
+
+    const getOpts = () => {
+        opts = opts ? opts : new Map
+        return opts
+    }
 
     const getThisScroller = () => {
+        const child = top.children.get(childEl)
+        const sibScrollers = child.scrollers
         if (!thisScroller) { thisScroller = sibScrollers.get(dir) }
         return thisScroller
     }
 
-    const setOpt = (key, val) => {
-        ownOptions.set(key, val)
-        return val
-    }
-
-    const getOpt = (key) => {
-        return ownOptions.get(key)
-    }
-
-    setOpt('start', '0vw')
-    setOpt('end', '0vw')
-    setOpt('parentStart', '0vw')
-    setOpt('parentEnd', '0vw')
 
     const proportion = (nume, divi) => {
         return tr(nume / divi)
     }
-
+    getOpts().set('senses', senses)
     return {
+        opts: getOpts(),
         listen: () => {
-            console.log('listening')
-            const s = vrug.util(getOpt('start')).toPx()
-            child.setOptOnce(id, '_start', s)
-            const e = vrug.util(getOpt('end')).toPx()
-            child.setOptOnce(id, '_end', e)
-            const ps = vrug.util(getOpt('parentStart')).toPx()
-            setOpt('_parentStart', ps)
-            const pe = vrug.util(getOpt('parentEnd')).toPx()
-            setOpt('_parentEnd', pe)
+            const thisScoller = getThisScroller()
+            const s = vrug.util(thisScoller.get('start')).toPx()
+            const e = vrug.util(thisScoller.get('end')).toPx()
+            const ps = vrug.util(thisScoller.get('parentStart')).toPx()
+            const pe = vrug.util(thisScoller.get('parentEnd')).toPx()
+
+            const senses = thisScroller.get('senses')
+            const responds = thisScroller.get('responds')
+            thisScoller.set('_parentEnd', pe)
 
             const traversable = e - s
             const ratio = proportion(traversable, (pe - ps))
-            console.log('first ratio', traversable, pe, ps, ratio)
-            setOpt('ratio', ratio)
 
+            thisScoller.set('ratio', ratio)
+
+            const senseProp = senses === VERTICAL ? 'scrollTop' : 'scrollLeft'
+            const respondProp = responds === HORIZONTAL ? 'scrollLeft' : 'scrollTop'
+            console.log('props', senses, responds, e, s, pe, ps, 'respProp', respondProp)
             el.addEventListener(
                 'scroll',
                 (ev) => {
                     // Take the scrolled distance relative to the sensitive range.
                     // We only move child if scrolled is in the sensitive range.
-                    if (el.scrollTop > ps && el.scrollTop < pe) {
+                    if (el[senseProp] > ps && el[senseProp] < pe) {
                         console.log(['s,e,ps,pe', s, e, ps, pe])
-                        console.log(['scrollTop', el.scrollTop, 'ratio', getOpt('ratio')])
-                        const traversed = el.scrollTop - ps
-                        const scaledTraversal = tr(traversed * getOpt('ratio'))
-                        childEl.scrollLeft = scaledTraversal
+                        console.log(['scrollTop', el[senseProp], 'ratio', ratio])
+                        const traversed = el[senseProp] - ps
+                        const scaledTraversal = tr(traversed * ratio)
+                        childEl[respondProp] = scaledTraversal
                         console.log('scaledTraversal', scaledTraversal)
+                    } else if (el[senseProp] <= ps) {
+                        childEl[respondProp] = s
+
+                    } else if (el[senseProp] >= pe) {
+                        childEl[respondProp] = e
                     }
                 },
                 false
             ) // addEventListner
             return getThisScroller()
         },
-        set: (arg1, arg2) => {
-            if (arg2 === undefined) {
-                setOpt(arg1, null)
-            } else {
-                setOpt(arg1, arg2)
-            }
-            return getThisScroller()
+        responds: (dir) => {
+            console.log('respond to', dir)
+            return getThisScroller().set('responds', dir)
         },
-        get: (prop) => getOpt(prop)
+        set: (arg1, arg2) => {
+            const thisScroller = getThisScroller()
+            if (arg2 === undefined) {
+                getOpts().set(arg1, null)
+            } else {
+                getOpts().set(arg1, arg2)
+            }
+            return thisScroller
+        },
+        get: (prop) => getOpts().get(prop)
     }
 }
 
@@ -133,16 +144,20 @@ const childMaker = (childEl, el) => {
         scrollers: new Map,
         doers: new Map,
         opts: new Map,
-        scrollWrapper: (dir, id) => scrollMaker(dir, id, childEl, el),
-        scroller: (dir) => {
-            invariant(() => dirs.includes(dir))
+        scrollWrapper: (senses, id) => scrollMaker(id, senses, childEl, el),
+        senses: (dir) => {
+            console.log('dir', dir)
+            invariant(() => axes.includes(dir))
             const thisChild = getThisChild()
             const identifier = thisChild.getIdentifier(dir)
-            return lookUpOrMake(
+
+            const scroller = lookUpOrMake(
                 thisChild.scrollers,
                 identifier,
-                (ch1) => thisChild.scrollWrapper(ch1, identifier)
+                (ident) => thisChild.scrollWrapper(dir, ident)
             )
+            console.log('scroller', scroller)
+            return scroller
         },
         getIdentifier(dir) {
             // placeholder; we will want to do more than one scroller per element per direction.
@@ -206,10 +221,12 @@ const vrugFns = (el) => {
         el,
         children: new Map,
         childWrapper: (childEl) => childMaker(childEl, el),
-        child: (chSel) => {
+        scrolls: (chSel) => {
             const top = lookUpOrMake(vrugs, el, vrugFns)
             const chEl = qs(chSel)
-            return lookUpOrMake(top.children, chEl, top.childWrapper)
+            const chWrapped = lookUpOrMake(top.children, chEl, top.childWrapper)
+            console.log('returning', chWrapped)
+            return chWrapped
         }
     }
 }

@@ -30,22 +30,26 @@
     <div class="text one"></div>
     <div class="text two"></div>
   </div>
-  <script type="module" src="./js/vrugan.js"></script>
+  
   <script type="module" src="/js/util/util.js"></script>
 
   <script type="module">
     import { qs } from '/js/util/util.js'
-    import { vrugan } from './js/vrugan.js'
     import { vrug } from './js/vrug.js'
-    vrug('body').child('.stage-view.one')
-      .scroller('u')
-      .set('start', '0vw')
-    .set('end', '100vw')
-    .set('parentStart', '500vw')
-    .set('parentEnd', '600vw')
-    .listen()
-    
-    qs('.stage-view.one').scrollLeft = vrug.util('100vw').toPx()
+
+    vrug('body')
+     .scrolls('.stage-view.one')
+     .senses('v')
+     .responds('h')
+     .set('start', '0vw')
+     .set('end', '100vw')
+     .set('parentStart', '500vw')
+     .set('parentEnd', '600vw')
+     .listen()
+
+    qs('.stage-view.one')
+    .scrollLeft = vrug.util('100vw')
+    .toPx()
     
   </script>
 </body>
