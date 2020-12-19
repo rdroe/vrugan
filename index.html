@@ -13,7 +13,7 @@
     <main>
       <div class="stage-view one">
 	<div class="stage-surface one">
-	 <div class="paper one">this is some text. i've got text; do you?</div>
+	 <div class="paper one"><h1>dr</h1>this is some text. i've got text; do you?</div>
 	 <div class="divider one"></div>
 	</div>
       </div><!-- stage view -->
@@ -37,7 +37,9 @@
     import { qs } from '/js/util/util.js'
     import { vrug } from './js/vrug.js'
 
-    vrug('body')
+    const master = vrug('body')
+
+    master
      .scrolls('.stage-view.one')
      .senses('v')
      .responds('h')
@@ -45,11 +47,16 @@
      .set('end', '100vw')
      .set('parentStart', '500vw')
      .set('parentEnd', '600vw')
-     .listen()
+    .listen()
 
-    qs('.stage-view.one')
-    .scrollLeft = vrug.util('100vw')
-    .toPx()
+    master.scrolls('.stage-view.one')
+    .senses('v')
+    .responds('h')
+     .set('start', '100vw')
+     .set('end', '0vw')
+     .set('parentStart', '800vw')
+    .set('parentEnd', '900vw')
+//    .listen()
     
   </script>
 </body>
