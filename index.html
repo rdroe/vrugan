@@ -1,7 +1,6 @@
 <!DOCTYPE html>
 <head>
   <title>davo roe</title>
-  <!-- <link href="stylesheets/vrug.css" rel="stylesheet"> -->
   <link href="stylesheets/vrugan.css" rel="stylesheet">   
   <meta name="viewport" content="minimum-scale=1">
 </head>
@@ -13,9 +12,8 @@
     <main>
       <div class="stage-view one">
 	<div class="stage-surface one">
-	 <div class="paper one"><h1>dr</h1>this is some text. i've got text; do you?</div>
-	 <div class="divider one"></div>
-	</div>
+	  <div class="paper one"><h1>dr</h1><div class="text">this is some text. i've got text; do you?</div></div>
+	 <div class="divider one"></div></div>
       </div><!-- stage view -->
       <div class="stage-view two">
 	<div class="stage-surface two">
@@ -23,40 +21,159 @@
 	 <div class="divider two"></div>
 	</div>
       </div><!-- stage view -->
-      
+      <div class="stage-view three">
+	<div class="stage-surface three">
+	  <div class="penta">
+	    <div class="penta-string">
+	    <div class="side s-1">
+	    </div>
+	    <div class="side s-2">
+	    </div>
+	    <div class="side s-3">
+	    </div>
+	    <div class="side s-4">
+	    </div>
+	    <div class="side s-5">
+	    </div>
+	    </div>
+	  </div>
+	</div>
+	</div>
     </main>
-    <div class="rect top subgrid-1"></div>
+    <div class="rect top subgrid // -1"></div>
     <div class="rect side"></div>
     <div class="text one"></div>
     <div class="text two"></div>
   </div>
-  
   <script type="module" src="/js/util/util.js"></script>
-
   <script type="module">
+    import { tr } from './js/globals.js'
     import { qs } from '/js/util/util.js'
     import { vrug } from './js/vrug.js'
 
     const master = vrug('body')
 
-    master
-     .scrolls('.stage-view.one')
+    const follower = master
+	  .scrolls('.stage-view.one')
+    
+    follower
      .senses('v')
      .responds('h')
      .set('start', '0vw')
      .set('end', '100vw')
-     .set('parentStart', '500vw')
-     .set('parentEnd', '600vw')
+     .set('parentStart', '400vw')
+     .set('parentEnd', '1001vw')
+    .listen()
+    
+    follower    
+    .senses('v')
+    .responds('v')
+     .set('start', '0vw')
+     .set('end', '400vw')
+     .set('parentStart', '900vw')
+    .set('parentEnd', '1200vw')
     .listen()
 
-    master.scrolls('.stage-view.one')
-    .senses('v')
-    .responds('h')
-     .set('start', '100vw')
-     .set('end', '0vw')
-     .set('parentStart', '800vw')
-    .set('parentEnd', '900vw')
-//    .listen()
+
+    const follower2 = master
+	  .scrolls('.stage-view.two')
     
+    follower2
+     .senses('v')
+     .responds('h')
+     .set('start', '0vw')
+     .set('end', '100vw')
+     .set('parentStart', '1200vw')
+     .set('parentEnd', '2200vw')
+    .listen()
+    
+    follower2   
+    .senses('v')
+    .responds('v')
+     .set('start', '0vw')
+     .set('end', '400vw')
+     .set('parentStart', '2400vw')
+    .set('parentEnd', '3300vw')
+    .listen()
+
+    const follower3 = master
+	  .scrolls('.stage-view.three')
+    
+    follower3
+     .senses('v')
+     .responds('h')
+     .set('start', '0vw')
+     .set('end', '100vw')
+     .set('parentStart', '3500vw')
+     .set('parentEnd', '4200vw')
+    .listen()
+ 
+    const follower4 = master
+	  .scrolls('.penta-string')
+    
+    const penta = qs('.penta') 
+    follower4
+     .senses('v')
+     .set('parentStart', '2900vw')
+     .set('parentEnd', '3900vw')
+    .listen((pos, obj) => {
+
+	const ps = obj.get('pixels', 'ps')
+	const pe = obj.get('pixels', 'pe')
+	const tot = pe - ps
+	const progress = tr((pos - pe ) / tot * 1000) / 1000
+
+	const el = obj.el
+	
+	const modPos1 =  pos % ( 360 * 50)
+	const modPos = tr( modPos1 / (360 * 50) * 360 *100 ) /100
+	const to = 'center'
+	const transform = `rotateZ(${modPos}deg)`
+	el.style.transformOrigin = to
+	el.style.transform = transform
+	const colorOpac = 1 - (progress )
+	penta.style.backgroundColor = `rgba(0,0,0, ${Math.min(.2, colorOpac)} )`
+        penta.style.borderColor = `rgba(0,0,0, ${colorOpac} )` 
+    })
+
+    const pentas = document.querySelectorAll('.side')
+
+    
+    follower4
+     .senses('v')
+     .set('parentStart', '5500vw')
+    .set('parentEnd', '8000vw')
+    
+    .listen((pos, obj) => {
+
+	const pe = obj.get('pixels', 'pe')	
+	const ps = obj.get('pixels', 'ps')
+
+	if (pos < ps || pos > pe) return
+
+	const suffix = window.innerWidth > window.innerHeight ? 'vh' : 'vw'
+	const translateBase = 15
+	const translateTot = 10
+
+	const tot = pe - ps
+	const progress = tr( (pos - ps) / tot * 8 * 1000) / 1000
+	
+	const el = obj.el
+	const translateProgress = progress * translateTot
+
+	const translate = translateBase + translateProgress
+
+	pentas.forEach((domEl, idx) => {
+	    const transProp = `translate(-50%, -50%) rotateZ(${72 * idx}deg) translateY(${translate}${suffix})`
+
+	    domEl.style.transform = transProp
+	})
+	
+    })
+
+    follower.init()
+    follower2.init()
+    follower3.init()
+    follower4.init()
   </script>
 </body>
