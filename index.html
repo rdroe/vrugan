@@ -24,12 +24,12 @@
       
       <div class="stage-view one">
 	<div class="stage-surface one">
-	  <div class="paper one"><h1>dr</h1><div class="text">this is some text. i've got text; do you?</div></div>
+	  <div class="paper one"><h1>dr</h1><div class="text"></div></div>
 	 <div class="divider one"></div></div>
       </div><!-- stage view -->
       <div class="stage-view two">
 	<div class="stage-surface two">
-	 <div class="paper two">this is some text. i've got text; do you?</div>
+	 <div class="paper two">team player</div>
 	 <div class="divider two"></div>
 	</div>
       </div><!-- stage view -->
@@ -169,7 +169,7 @@
     follower4
      .senses('v')
     .set('parentStart', startRange(-250) )
-    .set('parentEnd', endRange(1000) )
+    .set('parentEnd', endRange(500) )
     .listen((pos, obj) => {
 
 	const ps = obj.get('pixels', 'ps')
@@ -197,7 +197,7 @@
     follower4
      .senses('v')
     .set('parentStart', startRange(0) )
-    .set('parentEnd', endRange(7000) )
+    .set('parentEnd', endRange(3000) )
     
     .listen((pos, obj) => {
 
@@ -216,7 +216,7 @@
 	const el = obj.el
 	const translateProgress = progress * translateTot
 
-	const translate = translateBase + translateProgress
+	const translate = translateBase + translateProgress * 5
 
 	pentas.forEach((domEl, idx) => {
 	    const transProp = `translate(-50%, -50%) rotateZ(${72 * idx}deg) translateY(${translate}${suffix})`
