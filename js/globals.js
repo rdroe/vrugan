@@ -1,5 +1,4 @@
 
-
 export const vrugs = new Map
 
 export const VERTICAL = 'v'
@@ -8,12 +7,13 @@ export const LESS = '<'
 export const GREATER = '>'
 export const IN_RANGE = 'in_range'
 export const UPDATER = 'updater'
+export const SCROLLER = 'scroller'
+
 class Invariant extends Error { constructor(...a) { super(...a) } }
 
 class InvalidViewUnit extends TypeError {
     constructor(...args) { super(...args) }
 }
-
 
 export const util = (arg1) => ({
     toPx: () => {

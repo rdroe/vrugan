@@ -9,7 +9,6 @@ import optionsMixin from './optionsMixin.js'
 
 export default (id, senses, childEl, el) => {
 
-    const dir = senses
     const top = vrugs.get(el)
 
     let wrappedEl
@@ -56,7 +55,7 @@ export default (id, senses, childEl, el) => {
 
 
             thisScroller.set('isActive', true)
-
+            if (fn !== undefined) thisScroller.responds('n/a')
             if (fn !== undefined) return thisScroller.funcListen(fn)
             getWrappedEl().activate(senses, top)
             thisScroller.set('senses', senses)
@@ -71,8 +70,15 @@ export default (id, senses, childEl, el) => {
             const ratio = proportion(traversable, (pe - ps))
 
             thisScroller.set('ratio', ratio)
+            const startGreaterThanEnd = s > e
 
-            thisScroller.set('doInvertSensor', s > e)
+            if (thisScroller.get('responds') === VERTICAL) {
+                if (startGreaterThanEnd) thisScroller.set('doInvertSensor', true)
+            } else {
+                if (startGreaterThanEnd === false) {
+                    thisScroller.set('doInvertSensor', true)
+                }
+            }
 
             return getThisScroller()
         },
@@ -95,7 +101,7 @@ export default (id, senses, childEl, el) => {
                 const traversed = (pos - ps)
                 const scaledTraversal = tr(traversed * ratio)
 
-                if (doInvert) {
+                if (!doInvert) {
                     return s + scaledTraversal
                 }
 
@@ -110,13 +116,11 @@ export default (id, senses, childEl, el) => {
             const pe = thisScroller.get('pixels', 'pe')
             const ps = thisScroller.get('pixels', 'ps')
 
-            if (pos > ps && pos < pe) {
-
+            if (pos >= ps && pos <= pe) {
                 return IN_RANGE
-            } else if (pos <= ps) {
-
+            } else if (pos > ps) {
                 return LESS
-            } else {
+            } else if (pos < ps) {
 
                 return GREATER
             }
@@ -133,7 +137,6 @@ export default (id, senses, childEl, el) => {
         },
         get: (nsOrProp, prop) => {
             return thisScroller.getOpt(nsOrProp, prop)
-
         },
         ...optionsMixin(getThisScroller())
     })

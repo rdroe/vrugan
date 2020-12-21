@@ -1,17 +1,8 @@
 
-import { vrugs, UPDATER, VERTICAL, HORIZONTAL, LESS, GREATER, IN_RANGE, assert } from './globals.js'
-
+import { vrugs, UPDATER, SCROLLER, VERTICAL, HORIZONTAL, assert } from './globals.js'
 import scroller from './scroller.js'
 import optionsMixin from './optionsMixin.js'
-
-
-class DifferingScrollResults extends Error {
-    constructor(...args) { super(...args) }
-}
-
-class InvalidResponseAxis extends TypeError {
-    constructor(...args) { super(...args) }
-}
+import getEffectiveScrollers, { applicableScrollResult, fireApplicableUpdaters, getEffectiveUpdaters } from './getEffectiveScrollers.js'
 
 let cntr = 0
 
@@ -20,78 +11,6 @@ const lookUpOrMake = (map, obj, wrapperFn) => {
     const wrapped = wrapperFn ? wrapperFn(obj) : new Map
     map.set(obj, wrapped) // wraps and sets it
     return wrapped
-}
-
-const directionallyResponsiveScrollers = (scrollers, responseAxis) => {
-    return [...scrollers.values()].filter(scr => {
-        return scr.get('responds') === responseAxis
-            && scr.get('isActive') === true
-            && scr.get('isUpdater') !== true
-    })
-}
-
-const updaters = (scrollers) => {
-    return [...scrollers.values()].filter(scr => {
-        return scr.get('isUpdater') === true
-    })
-}
-
-/**
-For the specified response axis, v or h (vertical or horizontal) find the first scroller that has the point in range. If none has the point in range, find those with the applicable boundaries that should specify a resting point. 
-
-**/
-const effectiveScrollers = (pos, scrollersOrUpdaters) => {
-
-    const candidates = scrollersOrUpdaters.reduce((accum, scr) => {
-
-        const relativePosition = scr.getRelativePosition(pos)
-
-        switch (relativePosition) {
-            case LESS:
-                if (!accum.less || scr.get('parentStart') < accum.less.get('parentStart')) {
-                    return { ...accum, less: scr }
-                }
-                return accum
-
-            case GREATER:
-                if (!accum.greater || scr.get('parentEnd') > accum.greater.get('parentEnd')) {
-                    return { ...accum, greater: scr }
-                }
-                return accum
-            case IN_RANGE: return { ...accum, inRange: scr };
-            default: throw new InvalidResponseAxis
-        }
-
-    }, {})
-
-    return Object.values(candidates)
-}
-
-const effectiveUpdaters = (pos, updaters) => {
-
-    // sort updaters into less, greater, and in range relative to scroll point.
-    const candidates = updaters.reduce((accum, scr) => {
-        const relativePosition = scr.getRelativePosition(pos)
-        let ret = accum
-
-        switch (relativePosition) {
-            case LESS:
-                ret = { ...accum, less: [...(accum.less || []), scr] }
-                break;
-            case GREATER:
-                ret = { ...accum, greater: [...(accum.greater || []), scr] }
-                break;
-            case IN_RANGE:
-                ret = { ...accum, inRange: [...(accum.inRange || []), scr] };
-                break;
-            default: throw new InvalidResponseAxis
-        }
-
-        return ret
-    }, {})
-
-    return Object.values(candidates).flatMap(_ => _)
-
 }
 
 export default (childEl, el) => {
@@ -105,54 +24,45 @@ export default (childEl, el) => {
     const thisChild = top.children.get(childEl)
 
     // Functions to evaluate all listening scrollers to focus on the applicable ones; functions to obtain position.
-    const getScrolledPosition = (pos, movementAxis) => {
+    const fireScrollers = (pos) => {
 
-        const directionalScrollers = directionallyResponsiveScrollers(thisChild.scrollers, movementAxis)
-        const scrollers = effectiveScrollers(pos, directionalScrollers, movementAxis)
+        const verticalScrollingData = getEffectiveScrollers(thisChild.scrollers, VERTICAL, pos)
+        const horizontalScrollingData = getEffectiveScrollers(thisChild.scrollers, HORIZONTAL, pos)
 
-        const result = scrollers.reduce((accum, curr) => {
-            const scrollRes = curr.getScrollResult(pos)
-            if (accum !== null && accum !== scrollRes) throw new Error(DifferingScrollResults)
-            return scrollRes
-        }, null)
+        const vertResults = applicableScrollResult(pos, verticalScrollingData[SCROLLER])
 
-        return result
+        const horizResults = applicableScrollResult(pos, horizontalScrollingData[SCROLLER])
+        const final = { scrollLeft: horizResults.scrollLeft, scrollTop: vertResults.scrollTop }
+        if (final.scrollTop === undefined && final.scrollLeft === undefined) {
+            throw new Error('No scroll results for ' + pos)
+        }
+        return final
     }
 
-    const horizontalScrolledPosition = (pos) => {
-        return getScrolledPosition(pos, HORIZONTAL)
-    }
+    // Functions to evaluate all listening scrollers to focus on the applicable ones; functions to obtain position.
+    const fireUpdaters = (pos) => {
 
-    const verticalScrolledPosition = (pos) => {
-        return getScrolledPosition(pos, VERTICAL)
-    }
+        const activeScrollerData = getEffectiveUpdaters(thisChild.scrollers, pos)
 
-    const callUpdaters = (pos) => {
-
-        const activeUpdaters = updaters(thisChild.scrollers)
-
-        const callableUpdaters = effectiveUpdaters(pos, activeUpdaters)
-
-        callableUpdaters.forEach(upd => upd.update(pos))
+        fireApplicableUpdaters(pos, activeScrollerData[UPDATER])
     }
 
     const handlers = {
 
-        [VERTICAL]: (ev) => {
+        [SCROLLER]: () => {
 
-            assert(() => ev.type === 'scroll')
             const pos = el.scrollTop
 
-            childEl.scrollLeft = horizontalScrolledPosition(pos)
-            childEl.scrollTop = verticalScrolledPosition(pos)
+            const { scrollTop, scrollLeft } = fireScrollers(pos)
+
+            childEl.scrollTop = typeof scrollTop === 'number' ? scrollTop : childEl.scrollTop
+            childEl.scrollLeft = typeof scrollLeft === 'number' ? scrollLeft : childEl.scrollLeft
+
 
         },
-        [UPDATER]: (ev) => {
+        [UPDATER]: () => {
 
-            assert(() => ev.type === 'scroll')
-            const pos = el.scrollTop
-
-            callUpdaters(pos)
+            fireUpdaters(el.scrollTop)
         }
     }
 
@@ -166,8 +76,10 @@ export default (childEl, el) => {
                 parent.el.addEventListener('scroll', handlers[UPDATER])
                 return
             }
-            parent.el.removeEventListener('scroll', handlers[dir])
-            parent.el.addEventListener('scroll', handlers[dir])
+
+            parent.el.removeEventListener('scroll', handlers[SCROLLER])
+
+            parent.el.addEventListener('scroll', handlers[SCROLLER])
         },
         scrollWrapper: (senses, id) => scroller(id, senses, childEl, el),
         senses: (dir) => {
@@ -179,22 +91,13 @@ export default (childEl, el) => {
                 identifier,
                 (ident) => thisChild.scrollWrapper(dir, ident)
             )
-            console.log('added a scroller for', childEl, identifier, ' is an ')
-            console.log(thisChild.scrollers)
             return scroller
         },
         init: () => {
 
-            const vInit = verticalScrolledPosition(el.scrollTop)
-            const hInit = horizontalScrolledPosition(el.scrollTop)
+            handlers[SCROLLER]()
+            handlers[UPDATER]()
 
-            if (typeof vInit === 'number') {
-                childEl.scrollTop = vInit
-            }
-
-            if (typeof hInit === 'number') {
-                childEl.scrollLeft = hInit
-            }
         },
         getIdentifier(dir) {
 

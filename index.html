@@ -3,6 +3,8 @@
   <title>davo roe</title>
   <link href="stylesheets/vrugan.css" rel="stylesheet">   
   <meta name="viewport" content="minimum-scale=1">
+  
+  <meta name="viewport" content="maximum-scale=1">  
 </head>
 <body>
   <div class="body-bground">
@@ -10,6 +12,16 @@
   </div>
   <div class="container">
     <main>
+      <div class="stage-view zero">
+	<div class="stage-surface zero">
+	  <div class="paper zero">
+	    <h1>davo roe</h1>
+	    <h3 class="text">ui, design, and backfrontend</h3>
+	  </div>
+	  <div class="divider zero"></div>
+	</div>
+      </div><!-- stage view -->
+      
       <div class="stage-view one">
 	<div class="stage-surface one">
 	  <div class="paper one"><h1>dr</h1><div class="text">this is some text. i've got text; do you?</div></div>
@@ -47,31 +59,73 @@
   </div>
   <script type="module" src="/js/util/util.js"></script>
   <script type="module">
+
     import { tr } from './js/globals.js'
     import { qs } from '/js/util/util.js'
     import { vrug } from './js/vrug.js'
+    const rangeEnds = [0]
+    const rangeStarts = []
+    const standardParentRange = 150
+    const startRange  = (num) => {
+	
+	const prevEnd = rangeEnds[rangeEnds.length - 1]
+	const start = num + prevEnd
+	rangeStarts[rangeStarts.length] = start
+
+	return `${start}vw`
+    }
+
+    const endRange = (num) => {
+	const prevStart = rangeStarts[rangeStarts.length -1]
+	const end = num + prevStart
+	rangeEnds[rangeEnds.length] = end
+
+	return `${end}vw`
+    }
 
     const master = vrug('body')
 
-    const follower = master
-	  .scrolls('.stage-view.one')
+    const follower0 = master
+     .scrolls('.stage-view.zero')
+ 
+    follower0
+     .senses('v')
+     .responds('v')
+     .set('start', '0vw')
+     .set('end', '30vw')
+    .set('parentStart', startRange(100) )
+    .set('parentEnd', endRange(standardParentRange))    
+    .listen()
     
+    
+    follower0
+     .senses('v')
+     .responds('v')
+     .set('start', '30vw')
+     .set('end', '200vw')
+    .set('parentStart', startRange(200))
+    .set('parentEnd', endRange(standardParentRange + (.3* standardParentRange) ))
+     .listen()
+
+    const follower = master
+     .scrolls('.stage-view.one')
+
     follower
      .senses('v')
      .responds('h')
      .set('start', '0vw')
      .set('end', '100vw')
-     .set('parentStart', '400vw')
-     .set('parentEnd', '1001vw')
+    .set('parentStart', startRange(0) )
+    .set('parentEnd', endRange(standardParentRange))
     .listen()
-    
+
     follower    
     .senses('v')
     .responds('v')
      .set('start', '0vw')
-     .set('end', '400vw')
-     .set('parentStart', '900vw')
-    .set('parentEnd', '1200vw')
+     .set('end', '200vw')
+    .set('parentStart', startRange(100) )
+    .set('parentEnd', endRange(standardParentRange))
     .listen()
 
 
@@ -83,17 +137,17 @@
      .responds('h')
      .set('start', '0vw')
      .set('end', '100vw')
-     .set('parentStart', '1200vw')
-     .set('parentEnd', '2200vw')
+    .set('parentStart', startRange(-60) )
+    .set('parentEnd', endRange(standardParentRange) )
     .listen()
     
     follower2   
     .senses('v')
     .responds('v')
      .set('start', '0vw')
-     .set('end', '400vw')
-     .set('parentStart', '2400vw')
-    .set('parentEnd', '3300vw')
+     .set('end', '200vw')
+    .set('parentStart', startRange(100) )
+    .set('parentEnd', endRange(standardParentRange) )
     .listen()
 
     const follower3 = master
@@ -104,8 +158,8 @@
      .responds('h')
      .set('start', '0vw')
      .set('end', '100vw')
-     .set('parentStart', '3500vw')
-     .set('parentEnd', '4200vw')
+    .set('parentStart', startRange(0) )
+    .set('parentEnd', endRange(standardParentRange) )
     .listen()
  
     const follower4 = master
@@ -114,8 +168,8 @@
     const penta = qs('.penta') 
     follower4
      .senses('v')
-     .set('parentStart', '2900vw')
-     .set('parentEnd', '3900vw')
+    .set('parentStart', startRange(-250) )
+    .set('parentEnd', endRange(1000) )
     .listen((pos, obj) => {
 
 	const ps = obj.get('pixels', 'ps')
@@ -125,14 +179,15 @@
 
 	const el = obj.el
 	
-	const modPos1 =  pos % ( 360 * 50)
-	const modPos = tr( modPos1 / (360 * 50) * 360 *100 ) /100
+	const modPos1 =  pos % ( 360 * 150)
+	const modPos = tr( modPos1 / (360* 10) * 360 *100 ) /100
 	const to = 'center'
 	const transform = `rotateZ(${modPos}deg)`
 	el.style.transformOrigin = to
 	el.style.transform = transform
-	const colorOpac = 1 - (progress )
+	const colorOpac = 0 - progress * 1.6 
 	penta.style.backgroundColor = `rgba(0,0,0, ${Math.min(.2, colorOpac)} )`
+
         penta.style.borderColor = `rgba(0,0,0, ${colorOpac} )` 
     })
 
@@ -141,8 +196,8 @@
     
     follower4
      .senses('v')
-     .set('parentStart', '5500vw')
-    .set('parentEnd', '8000vw')
+    .set('parentStart', startRange(0) )
+    .set('parentEnd', endRange(7000) )
     
     .listen((pos, obj) => {
 
@@ -156,7 +211,7 @@
 	const translateTot = 10
 
 	const tot = pe - ps
-	const progress = tr( (pos - ps) / tot * 8 * 1000) / 1000
+	const progress = tr( (pos - ps) / tot * 25 * 1000) / 1000
 	
 	const el = obj.el
 	const translateProgress = progress * translateTot
@@ -169,11 +224,11 @@
 	    domEl.style.transform = transProp
 	})
 	
-    })
-
-    follower.init()
+    }) 
+    follower0.init()
+    follower.init() 
     follower2.init()
     follower3.init()
-    follower4.init()
+    follower4.init() 
   </script>
 </body>
