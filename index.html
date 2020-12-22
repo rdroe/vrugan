@@ -198,14 +198,29 @@
      .senses('v')
     .set('parentStart', startRange(0) )
     .set('parentEnd', endRange(3000) )
-    
     .listen((pos, obj) => {
+	updatePentas(pos, obj)
+    })
+    
+    follower0.init()
+    follower.init() 
+    follower2.init()
+    follower3.init()
+    follower4.init()
 
+
+    function updatePentas (pos, obj) {
+	
 	const pe = obj.get('pixels', 'pe')	
 	const ps = obj.get('pixels', 'ps')
+	// utility
+	const makeTransProp = () => {
 
-	if (pos < ps || pos > pe) return
-
+	}
+	if (pos < ps || pos > pe) {
+	    obj.update(pos)
+	}
+	
 	const suffix = window.innerWidth > window.innerHeight ? 'vh' : 'vw'
 	const translateBase = 15
 	const translateTot = 10
@@ -217,18 +232,19 @@
 	const translateProgress = progress * translateTot
 
 	const translate = translateBase + translateProgress * 5
-
-	pentas.forEach((domEl, idx) => {
-	    const transProp = `translate(-50%, -50%) rotateZ(${72 * idx}deg) translateY(${translate}${suffix})`
-
-	    domEl.style.transform = transProp
-	})
 	
-    }) 
-    follower0.init()
-    follower.init() 
-    follower2.init()
-    follower3.init()
-    follower4.init() 
+	const updatePentas = () => {
+	    
+	    return pentas.forEach((domEl, idx) => {
+		const transProp = `translate(-50%, -50%) rotateZ(${72 * idx}deg) translateY(${translate}${suffix})`
+
+		domEl.style.transform = transProp
+	    })
+	}
+	updatePentas()
+
+	
+    }
+    
   </script>
 </body>
