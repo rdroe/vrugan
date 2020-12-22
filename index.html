@@ -63,6 +63,7 @@
     import { tr } from './js/globals.js'
     import { qs } from '/js/util/util.js'
     import { vrug } from './js/vrug.js'
+    import pentagonSpinner from './js/pentagonSpinner.js'
     const rangeEnds = [0]
     const rangeStarts = []
     const standardParentRange = 150
@@ -199,7 +200,7 @@
     .set('parentStart', startRange(0) )
     .set('parentEnd', endRange(3000) )
     .listen((pos, obj) => {
-	updatePentas(pos, obj)
+	pentagonSpinner(pentas, pos, obj)
     })
     
     follower0.init()
@@ -208,43 +209,5 @@
     follower3.init()
     follower4.init()
 
-
-    function updatePentas (pos, obj) {
-	
-	const pe = obj.get('pixels', 'pe')	
-	const ps = obj.get('pixels', 'ps')
-	// utility
-	const makeTransProp = () => {
-
-	}
-	if (pos < ps || pos > pe) {
-	    obj.update(pos)
-	}
-	
-	const suffix = window.innerWidth > window.innerHeight ? 'vh' : 'vw'
-	const translateBase = 15
-	const translateTot = 10
-
-	const tot = pe - ps
-	const progress = tr( (pos - ps) / tot * 25 * 1000) / 1000
-	
-	const el = obj.el
-	const translateProgress = progress * translateTot
-
-	const translate = translateBase + translateProgress * 5
-	
-	const updatePentas = () => {
-	    
-	    return pentas.forEach((domEl, idx) => {
-		const transProp = `translate(-50%, -50%) rotateZ(${72 * idx}deg) translateY(${translate}${suffix})`
-
-		domEl.style.transform = transProp
-	    })
-	}
-	updatePentas()
-
-	
-    }
-    
   </script>
 </body>
