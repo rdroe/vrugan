@@ -30,6 +30,7 @@ export const getEffectiveUpdaters = (allElementScrollers, pos) => {
     }
 
     allElementScrollers.forEach(scr => {
+
         if (scr.get('isActive') !== true) {
             return
         }
@@ -38,13 +39,10 @@ export const getEffectiveUpdaters = (allElementScrollers, pos) => {
 
         const type = scr.get('isUpdater') ? UPDATER : SCROLLER
         listsByType[type] = listsByType[type] ? listsByType[type] : typedList
+        listsByType[type].inRangeScrollers.push(scr)
 
-        const scrollerRelationResult = scr.getRelativePosition(pos)
 
-        if (scrollerRelationResult === IN_RANGE) {
-            listsByType[type].inRangeScrollers.push(scr)
-            return
-        }
+
     })
 
     return listsByType

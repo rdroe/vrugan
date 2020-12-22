@@ -1,16 +1,6 @@
 import { tr } from './globals.js'
 
-export default (pentas, pos, obj) => {
-
-    const pe = obj.get('pixels', 'pe')
-    const ps = obj.get('pixels', 'ps')
-
-    // utility
-    if (pos < ps || pos > pe) {
-        obj.update(pos)
-    }
-
-
+const transformSide = (pos, ps, pe) => {
     const translateBase = 15
     const translateTot = 10
 
@@ -20,12 +10,10 @@ export default (pentas, pos, obj) => {
     const translateProgress = progress * translateTot
 
     const translate = translateBase + translateProgress * 5
-
-
-    pentaHelper(pentas, translate)
+    return translate
 }
 
-function pentaHelper(pentas, translate) {
+const pentaHelper = (pentas, translate) => {
 
     const suffix = window.innerWidth > window.innerHeight ? 'vh' : 'vw'
     return pentas.forEach((domEl, idx) => {
@@ -33,5 +21,21 @@ function pentaHelper(pentas, translate) {
 
         domEl.style.transform = transProp
     })
-
 }
+
+export default (pentas, pos, obj) => {
+
+    const pe = obj.get('pixels', 'pe')
+    const ps = obj.get('pixels', 'ps')
+    let translate
+    if (pos < ps) { // todo: here and in spinner, dont check every time.
+        translate = transformSide(ps, ps, pe)
+    } else if (pos > pe) {
+        translate = transformSide(pe, ps, pe)
+    } else {
+        translate = transformSide(pos, ps, pe)
+    }
+    pentaHelper(pentas, translate)
+}
+
+

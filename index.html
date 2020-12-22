@@ -166,30 +166,49 @@
     const follower4 = master
 	  .scrolls('.penta-string')
     
-    const penta = qs('.penta') 
+    const penta = qs('.penta')
+
+    const updatePentaDom = (el, deg, colorOpac) => {
+	    el.style.transform =`rotateZ(${deg}deg)`
+	    penta.style.backgroundColor = `rgba(0,0,0, ${Math.min(.2, colorOpac)} )`
+            penta.style.borderColor = `rgba(0,0,0, ${colorOpac} )`
+	}
+
+    const spinHelper = (pos, ps, pe) => {
+	    const tot = pe - ps
+	    const prog = tr((pos - pe ) / tot * 1000) / 1000
+	    const modPos1 =  pos % ( 360 * 150)
+	    const multiplier = tr( modPos1 / (360* 10) * 360 *100 ) /100
+	    const colorOpac = 0 - prog * 1.6	    
+	    return [ multiplier,  colorOpac ]
+	}
+    
+    
     follower4
      .senses('v')
-    .set('parentStart', startRange(-250) )
-    .set('parentEnd', endRange(500) )
+     .set('parentStart', startRange(-250) )
+     .set('parentEnd', endRange(500) )
     .listen((pos, obj) => {
+
+	const el = obj.el
+
+	const rawPs = obj.get('parentStart')
+	const rawPe = obj.get('parentEnd')
 
 	const ps = obj.get('pixels', 'ps')
 	const pe = obj.get('pixels', 'pe')
-	const tot = pe - ps
-	const progress = tr((pos - pe ) / tot * 1000) / 1000
+	let spinParams
+	if (pos < ps) {
+	    spinParams = spinHelper(ps - 1, ps, pe)
+	} else if (pos > pe) {
+	    spinParams = spinHelper(pe + 1, ps, pe)
+	} else {
+	    spinParams = spinHelper(pos, ps, pe)
+	}
+	const [modPos, colorOpac] = spinParams
+	updatePentaDom(el, modPos, colorOpac)	    
 
-	const el = obj.el
-	
-	const modPos1 =  pos % ( 360 * 150)
-	const modPos = tr( modPos1 / (360* 10) * 360 *100 ) /100
-	const to = 'center'
-	const transform = `rotateZ(${modPos}deg)`
-	el.style.transformOrigin = to
-	el.style.transform = transform
-	const colorOpac = 0 - progress * 1.6 
-	penta.style.backgroundColor = `rgba(0,0,0, ${Math.min(.2, colorOpac)} )`
 
-        penta.style.borderColor = `rgba(0,0,0, ${colorOpac} )` 
     })
 
     const pentas = document.querySelectorAll('.side')
