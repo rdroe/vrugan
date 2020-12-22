@@ -4,6 +4,7 @@ import { vrugs } from './globals.js'
 import follower from './follower.js'
 
 export const vrug = (sel) => {
+
     const el = qs(sel)
     if (!el) throw new Error()
     if (vrugs.has(el)) return vrugs.get(el)
@@ -12,8 +13,6 @@ export const vrug = (sel) => {
     return master
 }
 
-
-
 const vrugFns = (el) => {
 
     return {
@@ -21,7 +20,18 @@ const vrugFns = (el) => {
         children: new Map,
         scrolls: (chSel) => {
             const chEl = qs(chSel)
-            return follower(chEl, el)
+            const f = follower(chEl, el)
+            const thisVrug = vrugs.get(el)
+            window.removeEventListener('resize', thisVrug.resize)
+            window.addEventListener('resize', thisVrug.resize)
+            return f
+        },
+        resize: () => {
+            const thisVrug = vrugs.get(el)
+            const followers = [...thisVrug.children.values()]
+            followers.forEach((foll) => {
+                foll.reactivate()
+            })
         }
     }
 }

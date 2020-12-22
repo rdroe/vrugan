@@ -57,14 +57,13 @@ export default (id, senses, childEl, el) => {
             thisScroller.set('isActive', true)
             if (fn !== undefined) thisScroller.responds('n/a')
             if (fn !== undefined) return thisScroller.funcListen(fn)
-            getWrappedEl().activate(senses, top)
+            getWrappedEl().activate(top)
             thisScroller.set('senses', senses)
             const s = util(thisScroller.get('start')).toPx()
             const e = util(thisScroller.get('end')).toPx()
 
             thisScroller.set('pixels', 's', s)
             thisScroller.set('pixels', 'e', e)
-
 
             const traversable = e - s // for fn, use parent 
             const ratio = proportion(traversable, (pe - ps))
@@ -81,11 +80,12 @@ export default (id, senses, childEl, el) => {
             }
 
             return getThisScroller()
+
         },
         funcListen(fn) {
             thisScroller.set('isUpdater', true)
             thisScroller.set('fn', fn)
-            getWrappedEl().activate(senses, top, UPDATER)
+            getWrappedEl().activate(top, UPDATER)
         },
         getScrollResult(pos) {
 

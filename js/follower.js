@@ -70,7 +70,21 @@ export default (childEl, el) => {
         scrollers: new Map,
         doers: new Map,
         opts: new Map,
-        activate: (dir, parent, type) => {
+
+        reactivate: () => {
+            thisChild.scrollers.forEach((scr) => {
+                const type = scr.get('isUpdater') ? UPDATER : SCROLLER
+                if (type === UPDATER) {
+                    const fn = scr.get('fn')
+                    scr.listen(fn)
+                } else {
+                    scr.listen()
+                }
+
+            })
+            thisChild.init()
+        },
+        activate: (parent, type) => {
             if (type === UPDATER) {
 
                 parent.el.removeEventListener('scroll', handlers[UPDATER])
@@ -79,7 +93,6 @@ export default (childEl, el) => {
             }
 
             parent.el.removeEventListener('scroll', handlers[SCROLLER])
-
             parent.el.addEventListener('scroll', handlers[SCROLLER])
         },
         scrollWrapper: (senses, id) => scroller(id, senses, childEl, el),
@@ -95,10 +108,8 @@ export default (childEl, el) => {
             return scroller
         },
         init: () => {
-
             handlers[SCROLLER]()
             handlers[UPDATER]()
-
         },
         getIdentifier(dir) {
 
