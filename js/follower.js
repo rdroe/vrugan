@@ -72,6 +72,7 @@ export default (childEl, el) => {
         opts: new Map,
         activate: (dir, parent, type) => {
             if (type === UPDATER) {
+
                 parent.el.removeEventListener('scroll', handlers[UPDATER])
                 parent.el.addEventListener('scroll', handlers[UPDATER])
                 return

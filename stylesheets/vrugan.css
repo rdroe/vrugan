@@ -173,6 +173,7 @@ div {
 }
 
 .body-bground > img.body-bground-img {
+    pointer-events: none;
     width: 100%;
     height: auto;
     position: fixed;
