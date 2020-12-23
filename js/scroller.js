@@ -42,18 +42,12 @@ export default (id, senses, childEl, el) => {
         el: childEl,
         opts: new Map,
         listen: (fn) => {
-
             const ps = util(thisScroller.get('parentStart')).toPx()
             const pe = util(thisScroller.get('parentEnd')).toPx()
-
             thisScroller.set('pixels', 'ps', ps)
             thisScroller.set('pixels', 'pe', pe)
-
             const senseProp = senses === VERTICAL ? 'scrollTop' : 'scrollLeft'
-
             thisScroller.set('senseProp', senseProp)
-
-
             thisScroller.set('isActive', true)
             if (fn !== undefined) thisScroller.responds('n/a')
             if (fn !== undefined) return thisScroller.funcListen(fn)

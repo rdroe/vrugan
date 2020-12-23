@@ -1,0 +1,84 @@
+<!DOCTYPE html>
+<head>
+  <title>davo roe</title>
+  <link href="stylesheets/vrugan.css" rel="stylesheet">   
+  <meta name="viewport" content="minimum-scale=1">  
+  <meta name="viewport" content="maximum-scale=1">  
+</head>
+<body>
+  <div class="body-bground">
+    <img class="body-bground-img" src="/bground/assets/poly-settings.png">
+  </div>
+  <div class="container">
+    <main>
+      <div class="stage-view zero">
+	<div class="stage-surface zero">
+	  <div class="paper zero">
+	    <h1>vrugan</h1>
+	    <h3 class="text">magic scrolls</h3>
+	  </div>
+	  <div class="divider zero"></div>
+	</div>
+      </div><!-- stage view -->
+    </main>
+    <div class="rect top subgrid // -1"></div>
+    <div class="rect side"></div>
+    <div class="text one"></div>
+    <div class="text two"></div>
+  </div>
+  <script type="module" src="/js/util/util.js"></script>
+  <script type="module">
+
+    import { tr } from '../../js/globals.js'
+    import { qs } from '../../../js/util/util.js'
+    import { vrug } from '../../js/vrug.js'
+
+    
+    const rangeEnds = [0]
+    const rangeStarts = []
+    const standardParentRange = 150
+    const startRange  = (num) => {
+	
+	const prevEnd = rangeEnds[rangeEnds.length - 1]
+	const start = num + prevEnd
+	rangeStarts[rangeStarts.length] = start
+
+	return `${start}vh`
+    }
+
+    const endRange = (num) => {
+	const prevStart = rangeStarts[rangeStarts.length -1]
+	const end = num + prevStart
+	rangeEnds[rangeEnds.length] = end
+
+	return `${end}vh`
+    }
+
+    const master = vrug('body')
+ 
+    const follower0 = master
+     .scrolls('.stage-view.zero')
+ 
+    follower0
+     .senses('v')
+     .responds('v')
+     .set('start', '0vh')
+     .set('end', '100vh')
+    
+    .set('parentStart', startRange(100))
+    .set('parentEnd', endRange(200))    
+    .listen()
+
+    follower0
+     .senses('v')
+     .responds('v')
+     .set('start', '100vh')
+     .set('end', '200vh')
+    .set('parentStart', startRange(150))
+    .set('parentEnd', endRange(250) )
+    .listen()
+    
+    follower0.init()
+
+  </script>
+</body>

@@ -54,7 +54,7 @@ div {
 .stage-surface {
     position: absolute;
     width: 200vw;
-    height: 3400vw;
+    height: 300vw;
     overflow: hidden;
     border-style: dashed;
     border-width: 2vw;
@@ -65,10 +65,36 @@ div {
 
 .stage-surface.zero {
     width: 100vw;
+    height: 250vh;
 }
+
+/*
+@media (orientation: landscape) {
+    .paper.zero {
+	top: 45%;
+	height: 40vw;
+	
+    }
+    h1 {
+	margin-top: 5%;
+    }
+}
+*/
+
+@media (orientation: portrait) {
+    .paper.zero {
+	bottom: 50vh;
+	height: 80vh;	
+    }
+}
+@media (orientation: landscape) {
+    .paper.zero {
+	bottom: 50vh;
+	height: 80vh;	
+    }
+}
+
 .paper.zero {
-    top: 50vw;
-    height: 80vh;
     width: 80vw;
     left: 10vw;
 }
@@ -85,7 +111,12 @@ div {
 .paper > h1 {
     display: block;
     font-family: arial, helvetica;
-    font-size: 1200%;
+    font-size: 700%;
+}
+
+paper.zero {
+    right: 30vw;
+    top: initial;
 }
 
 .paper {
@@ -164,7 +195,7 @@ div {
 }
 
 .paper {
-    font-family: garamond, times;
+    font-family: helvetica, arial;
     font-size: 200%;    
     position: absolute;
     height: 90vw;

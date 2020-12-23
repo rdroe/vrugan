@@ -64,6 +64,7 @@
     import { qs } from '/js/util/util.js'
     import { vrug } from './js/vrug.js'
     import pentagonSpinner from './js/pentagonSpinner.js'
+    
     const rangeEnds = [0]
     const rangeStarts = []
     const standardParentRange = 150
@@ -98,13 +99,12 @@
     .set('parentEnd', endRange(standardParentRange))    
     .listen()
     
-    
     follower0
      .senses('v')
      .responds('v')
      .set('start', '30vw')
      .set('end', '200vw')
-    .set('parentStart', startRange(200))
+    .set('parentStart', startRange(130))
     .set('parentEnd', endRange(standardParentRange + (.3* standardParentRange) ))
      .listen()
 
