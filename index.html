@@ -60,30 +60,19 @@
   <script type="module" src="/js/util/util.js"></script>
   <script type="module">
 
-    import { tr } from './js/globals.js'
-    import { qs } from '/js/util/util.js'
+    import { tr, qs, postfixer, offsetter } from './js/globals.js'
     import { vrug } from './js/vrug.js'
     import pentagonSpinner from './js/pentagonSpinner.js'
     
-    const rangeEnds = [0]
-    const rangeStarts = []
+    const offsetter1 = offsetter()
+    const startVhRange = postfixer(offsetter1.startPoint, 'vh')
+    const endVhRange = postfixer(offsetter1.endPoint, 'vh')    
+
+    const offsetter2 = offsetter()
+    const startVwRange = postfixer(offsetter2.startPoint, 'vw')
+    const endVwRange = postfixer(offsetter2.endPoint, 'vw')
+    
     const standardParentRange = 150
-    const startRange  = (num) => {
-	
-	const prevEnd = rangeEnds[rangeEnds.length - 1]
-	const start = num + prevEnd
-	rangeStarts[rangeStarts.length] = start
-
-	return `${start}vw`
-    }
-
-    const endRange = (num) => {
-	const prevStart = rangeStarts[rangeStarts.length -1]
-	const end = num + prevStart
-	rangeEnds[rangeEnds.length] = end
-
-	return `${end}vw`
-    }
 
     const master = vrug('body')
 
@@ -93,19 +82,19 @@
     follower0
      .senses('v')
      .responds('v')
-     .set('start', '0vw')
-     .set('end', '30vw')
-    .set('parentStart', startRange(100) )
-    .set('parentEnd', endRange(standardParentRange))    
+     .set('start', '0vh')
+     .set('end', '100vh')
+    .set('parentStart', startVhRange(0) )
+    .set('parentEnd', endVhRange(100) )    
     .listen()
     
     follower0
      .senses('v')
      .responds('v')
-     .set('start', '30vw')
-     .set('end', '200vw')
-    .set('parentStart', startRange(130))
-    .set('parentEnd', endRange(standardParentRange + (.3* standardParentRange) ))
+     .set('start', '100vh')
+     .set('end', '200vh')
+    .set('parentStart', startVhRange(150))
+    .set('parentEnd', endVhRange(100))
      .listen()
 
     const follower = master
@@ -116,8 +105,8 @@
      .responds('h')
      .set('start', '0vw')
      .set('end', '100vw')
-    .set('parentStart', startRange(0) )
-    .set('parentEnd', endRange(standardParentRange))
+    .set('parentStart', startVwRange(offsetter1.lastStart() ) )
+    .set('parentEnd', endVwRange(standardParentRange))
     .listen()
 
     follower    
@@ -125,8 +114,8 @@
     .responds('v')
      .set('start', '0vw')
      .set('end', '200vw')
-    .set('parentStart', startRange(100) )
-    .set('parentEnd', endRange(standardParentRange))
+    .set('parentStart', startVwRange(100) )
+    .set('parentEnd', endVwRange(standardParentRange))
     .listen()
 
 
@@ -138,8 +127,8 @@
      .responds('h')
      .set('start', '0vw')
      .set('end', '100vw')
-    .set('parentStart', startRange(-60) )
-    .set('parentEnd', endRange(standardParentRange) )
+    .set('parentStart', startVwRange(-60) )
+    .set('parentEnd', endVwRange(standardParentRange) )
     .listen()
     
     follower2   
@@ -147,8 +136,8 @@
     .responds('v')
      .set('start', '0vw')
      .set('end', '200vw')
-    .set('parentStart', startRange(100) )
-    .set('parentEnd', endRange(standardParentRange) )
+    .set('parentStart', startVwRange(100) )
+    .set('parentEnd', endVwRange(standardParentRange) )
     .listen()
 
     const follower3 = master
@@ -159,8 +148,8 @@
      .responds('h')
      .set('start', '0vw')
      .set('end', '100vw')
-    .set('parentStart', startRange(0) )
-    .set('parentEnd', endRange(standardParentRange) )
+    .set('parentStart', startVwRange(0) )
+    .set('parentEnd', endVwRange(standardParentRange) )
     .listen()
  
     const follower4 = master
@@ -186,8 +175,8 @@
     
     follower4
      .senses('v')
-     .set('parentStart', startRange(-250) )
-     .set('parentEnd', endRange(500) )
+     .set('parentStart', startVwRange(-250) )
+     .set('parentEnd', endVwRange(500) )
     .listen((pos, obj) => {
 
 	const el = obj.el
@@ -207,8 +196,6 @@
 	}
 	const [modPos, colorOpac] = spinParams
 	updatePentaDom(el, modPos, colorOpac)	    
-
-
     })
 
     const pentas = document.querySelectorAll('.side')
@@ -216,8 +203,8 @@
     
     follower4
      .senses('v')
-    .set('parentStart', startRange(0) )
-    .set('parentEnd', endRange(3000) )
+    .set('parentStart', startVwRange(0) )
+    .set('parentEnd', endVwRange(3000) )
     .listen((pos, obj) => {
 	pentagonSpinner(pentas, pos, obj)
     })

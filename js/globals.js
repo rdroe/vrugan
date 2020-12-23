@@ -15,6 +15,9 @@ class InvalidScrollParam extends TypeError {
     constructor(...args) { super(...args) }
 }
 
+class CannotCloseNonexistentRange extends Error {
+    constructor(...args) { super(...args) }
+}
 const toPxFromVw = (arg1) => {
     const parsed = parseInt(arg1, 10)
     if (`${parsed}vw` !== arg1) throw new InvalidScrollParam
@@ -48,6 +51,50 @@ export const util = (arg1) => ({
 })
 
 
+export const postfixer = (outputter, unit) => {
+    return (arg) => {
+        const retVal = outputter(arg)
+        return `${retVal}${unit}`
+    }
+}
+
+export const offsetter = (offset = 0) => {
+
+    const starts = []
+    const ends = []
+
+    return {
+        starts, ends,
+        startPoint: (num) => {
+            const prevEnd = ends.length === 0
+                ? offset
+                : ends[ends.length - 1]
+            const newStart = prevEnd + num
+            starts[starts.length] = newStart
+            return newStart
+
+        },
+        endPoint: (num) => {
+            if (starts.length === 0) throw new CannotCloseNonexistentRange
+            const prevStart = starts[starts.length - 1]
+            const newEnd = prevStart + num
+            ends[ends.length] = newEnd
+            return newEnd
+        },
+        lastStart: () => {
+            return starts[starts.length - 1]
+        },
+        lastEnd: () => {
+            return ends[ends.length - 1]
+        }
+    }
+
+}
+
 export const tr = (num) => Math.trunc(num)
 
 export const assert = (fn, msg) => { if (!fn()) throw new Invariant(msg) }
+
+export const qs = (sel) => {
+    return document.querySelector(sel)
+}

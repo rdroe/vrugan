@@ -81,7 +81,6 @@ div {
 
 .paper.zero {
     bottom: 100vh;
-    height: 100vh;
     bottom: calc(100vh - var(--stage-view-border-width) - var(--stage-surface-border-width));
     height: 100vh;
     

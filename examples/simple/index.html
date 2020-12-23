@@ -29,31 +29,17 @@
   <script type="module" src="/js/util/util.js"></script>
   <script type="module">
 
-    import { tr } from '../../js/globals.js'
+    import { tr, offsetter, postfixer } from '../../js/globals.js'
     import { qs } from '../../../js/util/util.js'
     import { vrug } from '../../js/vrug.js'
 
     
-    const rangeEnds = [0]
-    const rangeStarts = []
     const standardParentRange = 150
-    const startRange  = (num) => {
-	
-	const prevEnd = rangeEnds[rangeEnds.length - 1]
-	const start = num + prevEnd
-	rangeStarts[rangeStarts.length] = start
+    const ranges = offsetter()
 
-	return `${start}vh`
-    }
-
-    const endRange = (num) => {
-	const prevStart = rangeStarts[rangeStarts.length -1]
-	const end = num + prevStart
-	rangeEnds[rangeEnds.length] = end
-
-	return `${end}vh`
-    }
-
+    const vhStartPoint = postfixer(ranges.startPoint, 'vh')
+    const vhEndPoint = postfixer(ranges.endPoint, 'vh')
+    
     const master = vrug('body')
  
     const follower0 = master
@@ -65,8 +51,8 @@
      .set('start', '0vh')
      .set('end', '100vh')
     
-    .set('parentStart', startRange(100))
-    .set('parentEnd', endRange(200))    
+    .set('parentStart', vhStartPoint(100))
+    .set('parentEnd', vhEndPoint(200))    
     .listen()
 
     follower0
@@ -74,8 +60,8 @@
      .responds('v')
      .set('start', '100vh')
      .set('end', '200vh')
-    .set('parentStart', startRange(150))
-    .set('parentEnd', endRange(250) )
+    .set('parentStart', vhStartPoint(150))
+    .set('parentEnd', vhEndPoint(250) )
     .listen()
     
     follower0.init()

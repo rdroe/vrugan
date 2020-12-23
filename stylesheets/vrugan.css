@@ -65,39 +65,16 @@ div {
 
 .stage-surface.zero {
     width: 100vw;
-    height: 250vh;
-}
-
-/*
-@media (orientation: landscape) {
-    .paper.zero {
-	top: 45%;
-	height: 40vw;
-	
-    }
-    h1 {
-	margin-top: 5%;
-    }
-}
-*/
-
-@media (orientation: portrait) {
-    .paper.zero {
-	bottom: 50vh;
-	height: 80vh;	
-    }
-}
-@media (orientation: landscape) {
-    .paper.zero {
-	bottom: 50vh;
-	height: 80vh;	
-    }
+    height: 300vh;
 }
 
 .paper.zero {
+    bottom: 100vh;
+    height: 100vh;
     width: 80vw;
     left: 10vw;
 }
+
 .paper.two {
     font-family: helvetica, arial;
     font-size: 5vw;
@@ -112,16 +89,6 @@ div {
     display: block;
     font-family: arial, helvetica;
     font-size: 700%;
-}
-
-paper.zero {
-    right: 30vw;
-    top: initial;
-}
-
-.paper {
-    right: 30vw;
-    top: 10vh;
 }
 
 .penta {
@@ -199,10 +166,15 @@ paper.zero {
     font-size: 200%;    
     position: absolute;
     height: 90vw;
-    max-height: 90vh;
     width: 60vw;
     background-color: white;
     opacity: .86;
+}
+
+.paper:not(.zero) {
+    right: 30vw;
+    top: 10vh;
+    max-height: 90vh;    
 }
 
 .body-bground > img.body-bground-img {
