@@ -31,7 +31,7 @@ body::-webkit-scrollbar {
   width: 100%;
   position: relative;
   width: 100%; 
-  height: 2500vw;
+  height: 1500vw;
 }
 
 div {
@@ -54,13 +54,11 @@ div {
 .stage-surface {
     position: absolute;
     width: 200vw;
-    height: 300vw;
+    height: 200vh;
     overflow: hidden;
     border-style: dashed;
     border-width: 2vw;
     border-color: darkgreen;
-    --penta-width: 15vw; 
-    --penta-side-height: 3vw;   
 }
 
 .stage-surface.zero {
@@ -68,27 +66,10 @@ div {
     height: 300vh;
 }
 
-.paper.zero {
-    bottom: 100vh;
-    height: 100vh;
-    width: 80vw;
-    left: 10vw;
-}
-
-.paper.two {
-    font-family: helvetica, arial;
-    font-size: 5vw;
-}
-@media (orientation: landscape) {
-    .stage-surface  {
-	--penta-width: 15vh;
-	--penta-side-height: 4vh;
-    }
-}
-.paper > h1 {
-    display: block;
-    font-family: arial, helvetica;
-    font-size: 700%;
+.stage-surface  {
+    --penta-width: max(20vw, 45px);
+    --penta-side-len: max(24vw, 65px);
+    --penta-side-width: calc( 5px + 2vw);
 }
 
 .penta {
@@ -105,26 +86,29 @@ div {
     border-top-right-radius: 12%;
     overflow: visible;
 }
+
 @media (orientation: portrait) {
     .penta {
 	top: 25vh;
     }
 }
-.penta .side {
-    position: absolute;
-    width: 20vw;    
-    height: var(--penta-side-height);
-    border-radius: 12px;
-    
-    top: 50%;
-    left: 50%;
+
+@media (orientation: landscape) {
+    .penta {
+	top: 15vh;
+    }
 }
 
-@media(orientation: landscape){
-    .penta .side {
-	width: 20vh;    
-	height: 3vh;
-    }
+.penta .side {
+    width: var(--penta-side-len);	
+    height: var(--penta-side-width);
+}
+
+.penta .side {
+    position: absolute;
+    border-radius: 12px;
+    top: 50%;
+    left: 50%;
 }
 
 .penta-string {
@@ -165,16 +149,36 @@ div {
     font-family: helvetica, arial;
     font-size: 200%;    
     position: absolute;
-    height: 90vw;
+    height: 60vh;
     width: 60vw;
     background-color: white;
     opacity: .86;
 }
 
-.paper:not(.zero) {
-    right: 30vw;
-    top: 10vh;
-    max-height: 90vh;    
+.paper.zero {
+    bottom: 180vh;
+    width: 80vw;
+    left: 10vw;
+}
+
+@media (orientation: landscape) {
+    .paper:not(.zero) {
+	right: 30vw;
+	bottom: 50vh;
+    }
+}
+
+@media (orientation: portrait) {
+    .paper:not(.zero) {
+	right: 30vw;
+	bottom: 115vh;
+    }
+}
+.paper > h1 {
+    display: block;
+    font-size: max(5rem, 20vh);
+    margin-top: 2vh;
+    font-family: arial, helvetica;    
 }
 
 .body-bground > img.body-bground-img {

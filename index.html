@@ -63,7 +63,7 @@
     import { tr, qs, postfixer, offsetter } from './js/globals.js'
     import { vrug } from './js/vrug.js'
     import pentagonSpinner from './js/pentagonSpinner.js'
-    
+
     const offsetter1 = offsetter()
     const startVhRange = postfixer(offsetter1.startPoint, 'vh')
     const endVhRange = postfixer(offsetter1.endPoint, 'vh')    
@@ -71,73 +71,111 @@
     const offsetter2 = offsetter()
     const startVwRange = postfixer(offsetter2.startPoint, 'vw')
     const endVwRange = postfixer(offsetter2.endPoint, 'vw')
-    
-    const standardParentRange = 150
 
     const master = vrug('body')
+    const vhToVw = (num) => {
+	const initAspect = window.innerWidth / window.innerHeight
+	console.log('multip', initAspect)
+	return Math.round( num / initAspect )
+    }
+
+    const betweenPages = 100
 
     const follower0 = master
      .scrolls('.stage-view.zero')
- 
+    
+    const pageDwell = 110
+    
     follower0
      .senses('v')
      .responds('v')
      .set('start', '0vh')
-     .set('end', '100vh')
-    .set('parentStart', startVhRange(0) )
-    .set('parentEnd', endVhRange(100) )    
-    .listen()
+     .set('end', '50vh')
+     .set('parentStart', startVhRange(0) )
+     .set('parentEnd', endVhRange( betweenPages ) )    
+     .listen()
     
     follower0
      .senses('v')
      .responds('v')
-     .set('start', '100vh')
+     .set('start', '50vh')
      .set('end', '200vh')
-    .set('parentStart', startVhRange(150))
-    .set('parentEnd', endVhRange(100))
+     .set('parentStart', startVhRange(pageDwell ))
+     .set('parentEnd', endVhRange( betweenPages  ))
      .listen()
 
     const follower = master
-     .scrolls('.stage-view.one')
+	  .scrolls('.stage-view.one')
 
+    const reusableRange = [ vhToVw(offsetter1.lastEnd()) , betweenPages ]
+
+    console.log ()
+    
     follower
      .senses('v')
      .responds('h')
      .set('start', '0vw')
      .set('end', '100vw')
-    .set('parentStart', startVwRange(offsetter1.lastStart() ) )
-    .set('parentEnd', endVwRange(standardParentRange))
+    .set('parentStart', startVwRange( reusableRange[0]  ) )
+    .set('parentEnd', endVwRange( reusableRange[1]) )
+    .listen()
+    
+    console.log(
+	offsetter2,
+
+	offsetter2.lastStart(), offsetter2.lastEnd())
+
+    const nextStart = tr( offsetter2.lastStart() + betweenPages/3 * 2)
+    
+    // diagonal add 
+    follower
+     .senses('v')
+     .responds('v')
+     .set('start', '0vw')
+     .set('end', '30vw')
+    .set('parentStart',  `${nextStart}vw` )
+    .set('parentEnd', `${offsetter2.lastEnd()}vw`  )
     .listen()
 
     follower    
     .senses('v')
     .responds('v')
-     .set('start', '0vw')
+     .set('start', '30vw')
      .set('end', '200vw')
-    .set('parentStart', startVwRange(100) )
-    .set('parentEnd', endVwRange(standardParentRange))
+    .set('parentStart', startVwRange( pageDwell ) ) 
+    .set('parentEnd', endVwRange( betweenPages ))
     .listen()
 
-
     const follower2 = master
-	  .scrolls('.stage-view.two')
-    
+      .scrolls('.stage-view.two')
+
     follower2
      .senses('v')
      .responds('h')
      .set('start', '0vw')
      .set('end', '100vw')
-    .set('parentStart', startVwRange(-60) )
-    .set('parentEnd', endVwRange(standardParentRange) )
+    .set('parentStart', startVwRange( -60  ) ) // follows prev page by
+    .set('parentEnd', endVwRange( betweenPages  ) )
+    .listen()
+
+    const nextStart2 = tr( offsetter2.lastStart() + betweenPages/3 * 2)
+
+    follower2   
+    .senses('v')
+    .responds('v')
+     .set('start', '0vw')
+     .set('end', '30vw')
+    .set('parentStart',  `${nextStart2}vw` )
+    .set('parentEnd', `${offsetter2.lastEnd()}vw`  )
     .listen()
     
     follower2   
     .senses('v')
     .responds('v')
-     .set('start', '0vw')
+     .set('start', '30vw')
      .set('end', '200vw')
-    .set('parentStart', startVwRange(100) )
-    .set('parentEnd', endVwRange(standardParentRange) )
+    .set('parentStart', startVwRange( pageDwell ) )
+    .set('parentEnd', endVwRange(betweenPages ) )
     .listen()
 
     const follower3 = master
@@ -148,8 +186,8 @@
      .responds('h')
      .set('start', '0vw')
      .set('end', '100vw')
-    .set('parentStart', startVwRange(0) )
-    .set('parentEnd', endVwRange(standardParentRange) )
+    .set('parentStart', startVwRange( -60 ) )
+    .set('parentEnd', endVwRange( betweenPages ) )
     .listen()
  
     const follower4 = master

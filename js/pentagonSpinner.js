@@ -1,5 +1,6 @@
 import { tr } from './globals.js'
-
+const WIDTH_MIN = '45px'
+const WIDTH_MIN_PORTR = '45px' // for now, should match the 
 const transformSide = (pos, ps, pe) => {
     const translateBase = 15
     const translateTot = 10
@@ -13,11 +14,11 @@ const transformSide = (pos, ps, pe) => {
     return translate
 }
 
-const pentaHelper = (pentas, translate) => {
+const pentaHelper = (pentas, translate, widthMin) => {
 
-    const suffix = window.innerWidth > window.innerHeight ? 'vh' : 'vw'
+    const suffix = 'vw'
     return pentas.forEach((domEl, idx) => {
-        const transProp = `translate(-50%, -50%) rotateZ(${72 * idx}deg) translateY(${translate}${suffix})`
+        const transProp = `translate(-50%, -50%) rotateZ(${72 * idx}deg) translateY(max( ${widthMin},${translate}${suffix}))`
 
         domEl.style.transform = transProp
     })
@@ -35,7 +36,6 @@ export default (pentas, pos, obj) => {
     } else {
         translate = transformSide(pos, ps, pe)
     }
-    pentaHelper(pentas, translate)
+    const isPortr = window.innerHeight > window.innerWidth
+    pentaHelper(pentas, translate, isPortr ? WIDTH_MIN_PORTR : WIDTH_MIN)
 }
-
-

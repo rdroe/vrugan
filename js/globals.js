@@ -66,6 +66,7 @@ export const offsetter = (offset = 0) => {
     return {
         starts, ends,
         startPoint: (num) => {
+            console.log('called startPoint')
             const prevEnd = ends.length === 0
                 ? offset
                 : ends[ends.length - 1]
