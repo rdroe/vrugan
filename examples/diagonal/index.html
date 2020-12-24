@@ -11,22 +11,18 @@
   </div>
   <div class="container">
     <main>
-      <div class="stage-surface outer">
-	<div class="stage-view zero">
+      <div class="stage-view zero">
+
 	  <div class="stage-surface zero">
 	    <div class="paper zero">
 	      <h1>vrugan</h1>
 	      <h3 class="text">magic scrolls</h3>
 	    </div>
 	    <div class="divider zero"></div>
-	  </div>
+
 	</div><!-- stage view -->
       </div>
     </main>
-    <div class="rect top subgrid // -1"></div>
-    <div class="rect side"></div>
-    <div class="text one"></div>
-    <div class="text two"></div>
   </div>
   <script type="module" src="/js/util/util.js"></script>
   <script type="module">
@@ -55,6 +51,16 @@
     
     .set('parentStart', '0vw'  )
     .set('parentEnd', '100vw'  )    
+    .listen()
+ 
+    follower0
+     .senses('v')
+     .responds('v')
+     .set('start', '0vh')
+     .set('end', '50vh')
+     
+    .set('parentStart', '25vw'  )
+    .set('parentEnd', '50vw'  )    
     .listen()
 
     follower0.init()

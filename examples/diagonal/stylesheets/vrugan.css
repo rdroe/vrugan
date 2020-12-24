@@ -21,8 +21,8 @@ body {
   position: fixed;
   overflow-y: scroll;
   margin:0;
-  --stage-view-border-width: 2px;
-  --stage-surface-border-width: 1%;
+  --stage-view-border-width: 0px;
+  --stage-surface-border-width: 0px;
   /* scrollbar-width: none;  */
 }
 
@@ -34,7 +34,7 @@ body::-webkit-scrollbar {
   width: 100%;
   position: relative;
   width: 100%; 
-  height: 1000vh;
+  height: 300vh;
 }
 
 div {
@@ -51,24 +51,29 @@ div {
    width: 100vw;
    border-style: solid;
    border-color: orange;
-   border-width: 2px;
+   border-width: var(--stage-view-border-width);
    overflow-x: hidden;
-   
 }
 
 .stage-surface {
     /* The overflow-er; mobile floor for visual elements*/
     position: absolute;
-    width: 200%;
-    height: 100%;
     overflow: hidden;
     border-style: dashed;
-    border-width: 2vw;
+    border-width: var(--stage-surface-border-width);
     border-color: darkgreen;
 }
 
+.stage-surface.zero {
+    /* The overflow-er; mobile floor for visual elements*/
+    width: 200%;
+    height: 200%;
+}
+
 .stage-surface.outer{
-    
+    width: 100%;
+    height: 200%;
+    left: 0;
 }
 
 .paper {
@@ -83,9 +88,14 @@ div {
 }
 
 .paper.zero {
-    bottom: 0;
-    height: 60vh;
+    bottom: calc(50vh - var(--stage-view-border-width) - var(--stage-surface-border-width));
+    height: 100vh;
     left: 100vw;
+    
+}
+
+.outer > .paper {
+    
 }
 
 .paper > h1 {
@@ -106,8 +116,6 @@ div {
 	margin-top: 2vh;
     }        
 }
-
-
 
 .body-bground > img.body-bground-img {
     pointer-events: none;
