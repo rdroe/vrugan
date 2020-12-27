@@ -1,0 +1,169 @@
+<!DOCTYPE html>
+<head>
+  <title>davo roe</title>
+  <link href="stylesheets/vrugan.css" rel="stylesheet">   
+  <meta name="viewport" content="minimum-scale=1">  
+  <meta name="viewport" content="maximum-scale=1">  
+</head>
+<body>
+  <div class="body-bground">
+    <img class="body-bground-img" src="/bground/assets/poly-settings.png">
+  </div>
+  <div class="container">
+    <main>
+      <div class="stage-view paper-only">
+	<div class="stage-surface paper-only">
+	  <div class="paper"><div class="text">davo roe</div></div>
+	</div>
+      </div>
+      <div class="stage-view">
+	<div class="stage-surface">
+	  <div class="paper penta">
+	    <div class="penta-string">
+  	     <div class="side s-1">
+	     </div>
+	     <div class="side s-2">
+	     </div>
+	     <div class="side s-3">
+	     </div>
+	     <div class="side s-4">
+	     </div>
+	     <div class="side s-5">
+	     </div>
+	    </div>
+	  </div>
+	</div>
+	</div>
+    </main>
+  </div>
+  <script type="module" src="/js/util/util.js"></script>
+  <script type="module">
+
+    import { util, tr, offsetter, postfixer } from '../../js/globals.js'
+    import { qs } from '../../../js/util/util.js'
+    import { vrug } from '../../js/vrug.js'
+    import pentagonSpinner from '../../js/pentagonSpinner.js'
+    
+    const standardParentRange = 150
+    const ranges = offsetter()
+
+    const vhStartPoint = postfixer(ranges.startPoint, 'vh')
+    const vhEndPoint = postfixer(ranges.endPoint, 'vh')
+    
+    const master = vrug('body')
+ 
+    const follower3 = master
+	  .scrolls('.stage-view.paper-only')
+
+    const initPentaWidth = (n) => {
+	const initAmt =  util('6vw').toPx()
+	const amt =  Math.max( initAmt, 20  );
+	return amt;
+    }
+    
+    follower3    
+     .senses('v')
+     .responds('v')
+     .set('start', '0vh')
+     .set('end', '100vh')
+    
+    .set('parentStart', vhStartPoint(100))
+    .set('parentEnd', vhEndPoint(200))    
+    .listen()
+
+    follower3
+     .senses('v')
+     .responds('v')
+     .set('start', '100vh')
+     .set('end', '200vh')
+    .set('parentStart', vhStartPoint(550))
+    .set('parentEnd', vhEndPoint(250) )
+    .listen()
+
+    const follower4pre = master.scrolls('.stage-view:not(.paper-only)')
+    const PENTA_FACTOR = 1
+    const pentas = document.querySelectorAll('.side')
+    follower4pre
+     .senses('v')
+     .responds('v')
+    .set('parentStart', `${ranges.ends[0]}vh`)
+    .set('parentEnd', `${ranges.ends[0] + 125}vh`)    
+    .listen((pos, obj) => {
+	return pentagonSpinner(pentas, pos, obj, 0, initPentaWidth() * PENTA_FACTOR ) })
+
+    follower4pre
+     .senses('v')
+     .responds('v')
+     .set('start', '0vh')
+     .set('end', '100vh')
+    
+    .set('parentStart', `${ranges.starts[0]}vh`)
+    .set('parentEnd', `${ranges.ends[0]}vh`)    
+    .listen()
+    
+    const follower4 = master
+	  .scrolls('.penta-string')
+    
+    const pentaState = {}
+    const penta = qs('.penta')
+
+    const updatePentaDom = (el, deg, colorOpac) => {
+	    el.style.transform =`rotateZ(${deg}deg)`
+	}
+
+    const spinHelper = (pos, ps, pe) => {
+	    const tot = pe - ps
+	    const prog = tr((pos - pe ) / tot * 1000) / 1000
+	    const modPos1 =  pos % ( 360 * 150)
+	    const multiplier = tr( modPos1 / (360* 10) * 360 *100 ) /100
+	const colorOpac = 0 - prog * 1.6	    //used to be returned as opacity
+	    return [ multiplier,  0 ]
+	}
+    
+    
+    follower4
+     .senses('v')
+    .set('parentStart', `${ranges.ends[0] +125}vh`)
+    .set('parentEnd', `${ranges.ends[0] + 275}vh`)    
+
+    .listen((pos, obj) => {
+	
+	const el = obj.el
+
+	const rawPs = obj.get('parentStart')
+	const rawPe = obj.get('parentEnd')
+
+	const ps = obj.get('pixels', 'ps')
+	const pe = obj.get('pixels', 'pe')
+	let spinParams
+	if (pos < ps) {
+	    spinParams = spinHelper(ps, ps, pe)
+	} else if (pos > pe) {
+	    spinParams = spinHelper(pe, ps, pe)
+	} else {
+	    spinParams = spinHelper(pos, ps, pe)
+	}
+	const [modPos, colorOpac] = spinParams
+	updatePentaDom(el, modPos, colorOpac)	    
+    })
+
+
+
+    
+    follower4
+     .senses('v')
+    .set('parentStart', `${ranges.ends[0] + 275}vh`)    
+    .set('parentEnd', vhEndPoint(500) )
+    .listen((pos, obj) => {
+      if (pos < obj.get('pixels', 'ps' ) ) {
+        return
+      }	
+      return pentagonSpinner(pentas, pos, obj, initPentaWidth() * PENTA_FACTOR, 5000) 
+    })
+   
+  follower3.init()
+    follower4.init()
+
+
+  </script>
+</body>

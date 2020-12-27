@@ -1,41 +1,33 @@
 import { tr } from './globals.js'
-const WIDTH_MIN = '45px'
-const WIDTH_MIN_PORTR = '45px' // for now, should match the 
-const transformSide = (pos, ps, pe) => {
-    const translateBase = 15
-    const translateTot = 10
 
-    const tot = pe - ps
-    const progress = tr((pos - ps) / tot * 25 * 1000) / 1000
 
-    const translateProgress = progress * translateTot
-
-    const translate = translateBase + translateProgress * 5
-    return translate
+const transform = (pos, ps, pe, min, max) => {
+    const traversed = tr((pos - ps) / (pe - ps) * 1000) / 1000
+    const traversedProportion = tr((max - min) * traversed)
+    return min + traversedProportion
 }
 
-const pentaHelper = (pentas, translate, widthMin) => {
+const pentaHelper = (pentas, translate) => {
 
-    const suffix = 'vw'
+    const translation = `${translate}px`
     return pentas.forEach((domEl, idx) => {
-        const transProp = `translate(-50%, -50%) rotateZ(${72 * idx}deg) translateY(max( ${widthMin},${translate}${suffix}))`
+        const transProp = `translate(-50%, -50%) rotateZ(${72 * idx}deg) translateY(${translation})`
 
         domEl.style.transform = transProp
     })
 }
 
-export default (pentas, pos, obj) => {
-
+export default (pentas, pos, obj, start, max = 100000) => {
+    const transFn = transform
     const pe = obj.get('pixels', 'pe')
     const ps = obj.get('pixels', 'ps')
     let translate
     if (pos < ps) { // todo: here and in spinner, dont check every time.
-        translate = transformSide(ps, ps, pe)
+        translate = transFn(ps, ps, pe, start, max)
     } else if (pos > pe) {
-        translate = transformSide(pe, ps, pe)
+        translate = transFn(pe, ps, pe, start, max)
     } else {
-        translate = transformSide(pos, ps, pe)
+        translate = transFn(pos, ps, pe, start, max)
     }
-    const isPortr = window.innerHeight > window.innerWidth
-    pentaHelper(pentas, translate, isPortr ? WIDTH_MIN_PORTR : WIDTH_MIN)
+    pentaHelper(pentas, translate, start, max)
 }
