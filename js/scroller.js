@@ -128,7 +128,6 @@ export default (id, senses, childEl, el) => {
             return thisScroller.set('responds', dir)
         },
         set: (arg1, arg2, arg3) => {
-            console.log('arg1, arg2', arg1, arg2, arg3)
             return thisScroller.setOpt(arg1, arg2, arg3)
         },
         get: (nsOrProp, prop) => {

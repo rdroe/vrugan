@@ -67,7 +67,6 @@ export const offsetter = (offset = 0) => {
     return {
         starts, ends,
         startPoint: (num) => {
-            console.log('called startPoint')
             const prevEnd = ends.length === 0
                 ? offset
                 : ends[ends.length - 1]
@@ -77,6 +76,7 @@ export const offsetter = (offset = 0) => {
 
         },
         endPoint: (num) => {
+
             if (starts.length === 0) throw new CannotCloseNonexistentRange
             const prevStart = starts[starts.length - 1]
             const newEnd = prevStart + num
@@ -95,7 +95,9 @@ export const offsetter = (offset = 0) => {
 
 export const tr = (num) => Math.trunc(num)
 
-export const assert = (fn, msg) => { if (!fn()) throw new Invariant(msg) }
+export const assert = (fn, msg) => {
+    if (!fn()) throw new Invariant(msg)
+}
 
 export const qs = (sel) => {
     return document.querySelector(sel)

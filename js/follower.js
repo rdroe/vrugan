@@ -5,24 +5,54 @@ import optionsMixin from './optionsMixin.js'
 import getEffectiveScrollers, { applicableScrollResult, fireApplicableUpdaters, getEffectiveUpdaters } from './getEffectiveScrollers.js'
 
 let cntr = 0
+class InvalidUnit extends Error { constructor(...a) { super(...a) } }
 
 const lookUpOrMake = (map, obj, wrapperFn) => {
+
     if (map.has(obj)) return map.get(obj) // returns previously found element.
     const wrapped = wrapperFn ? wrapperFn(obj) : new Map
     map.set(obj, wrapped) // wraps and sets it
     return wrapped
 }
 
-export const addDirection = (follower, dir, s, e, ps, pe) => {
-    const ownUnits = dir === 'h' ? asVw : asVh
+const unitize = (anArg, u) => {
+
+    if (!u) throw new InvalidUnit
+
+    if (typeof (anArg) === 'number') {
+        return `${anArg}${u}`
+    }
+
+    const parsedToInt = parseInt(anArg, 10)
+    const candidateConversion = `${parsedToInt}${u}`
+
+    return candidateConversion
+}
+
+export const addDirection = (follower, dir, s, e, ps, pe, senseUnit = 'vw') => {
+
+    const toOwnUnits = dir === 'h' ? asVw : asVh
+
+
     follower
         .senses('v')
         .responds(dir)
-        .set('start', ownUnits(s))
-        .set('end', ownUnits(e))
-        .set('parentStart', asVw(ps))
-        .set('parentEnd', asVw(pe))
+        .set('start', toOwnUnits(s))
+        .set('end', toOwnUnits(e))
+        .set('parentStart', unitize(ps, senseUnit))
+        .set('parentEnd', unitize(pe, senseUnit))
         .listen()
+    return follower
+}
+
+export const addUpdater = (follower, fn, ps, pe, overrideSenseUnits) => {
+    console.log('ps, pe, override', ps, pe, overrideSenseUnits)
+    follower
+        .senses('v')
+        .set('parentStart', unitize(ps, overrideSenseUnits))
+        .set('parentEnd', unitize(pe, overrideSenseUnits))
+        .listen(fn)
+
     return follower
 }
 
@@ -126,7 +156,7 @@ export default (childEl, el) => {
         },
         getIdentifier(dir) {
 
-            const id = `${dir}-${cntr}`
+            const id = `${dir} -${cntr} `
             cntr += 1
 
             return id
@@ -135,6 +165,9 @@ export default (childEl, el) => {
         doer: () => ({}),
         addDirection: (...args) => {
             return addDirection(thisChild, ...args)
+        },
+        addUpdater: (...args) => {
+            return addUpdater(thisChild, ...args)
         },
         ...optionsMixin(thisChild)
     })

@@ -44,98 +44,64 @@ A<!DOCTYPE html>
     import { vrug } from '../../js/vrug.js'
     import explodePenta, { rotatePenta } from '../../js/explodePenta.js'
 
-    const ranges = offsetter()
-    const vhStartPoint = postfixer(ranges.startPoint, 'vh')
-    const vhEndPoint = postfixer(ranges.endPoint, 'vh')
-
-    const addVh = (str, num) => {
-	return `${num + parseInt(str, 10) }vh`
-    }
-
     const master = vrug('body')
-    
-    const follower = master
-	  .addScroller('.stage-view.paper-only')
-
     const initPentaWidth = (n) => {
 	const initAmt =  util('5vw').toPx()
 	const amt =  Math.max( initAmt, 15  );
 	return amt;
     }
+    
+    const pentas = document.querySelectorAll('.side')
+    const penta = qs('.penta')
+    
+    const scrollOnscreen = 50
+    const scrollOnscreenEnd = 125
 
-    const scrollOnscreen = vhStartPoint(50)
-    const scrollOnscreenEnd = vhEndPoint(125)
-
-    const scrollOffscreen = addVh(scrollOnscreenEnd, 1200)
-    const scrollOffscreenEnd = addVh(scrollOffscreen, 200)
+    const scrollOffscreen = scrollOnscreenEnd + 1200
+    const scrollOffscreenEnd = scrollOffscreen + 200
    
-    const astScrollStart = addVh(scrollOnscreenEnd, 0)
-    const astScrollEnd = addVh(astScrollStart, 175)
+    const astScrollStart = scrollOnscreenEnd
+    const astScrollEnd = astScrollStart + 175
 
-    const startSpread = addVh(astScrollEnd, 300)
-    const endSpread = addVh(startSpread, 150)
+    const startSpread = astScrollEnd + 300
+    const endSpread = startSpread + 150
 
     const rotateOneStart = astScrollEnd
-    const rotateOneEnd = addVh(endSpread, 200)
+    const rotateOneEnd = endSpread + 200
 
     const explodeStart = rotateOneEnd
-    const explodeEnd = addVh(rotateOneEnd, 350)
-   
-    // Coming onstage
-    follower    
-    .addDirection('v', 0, 100, parseInt(scrollOnscreen), parseInt(scrollOnscreenEnd))
+    const explodeEnd = rotateOneEnd + 350
 
-    // scrolling off
-    follower
-          .addDirection('v', 100, 200, parseInt(scrollOffscreen), parseInt(scrollOffscreenEnd))
+    // Coming onstage
+    const follower = master
+	  .addScroller('.stage-view.paper-only')
+       .addDirection('v', 0, 100, parseInt(scrollOnscreen), parseInt(scrollOnscreenEnd), 'vh')
+       .addDirection('v', 100, 200, parseInt(scrollOffscreen), parseInt(scrollOffscreenEnd), 'vh')
 
     // asterisk scrolls onscreen
     const follower4pre = master
-	  .addScroller('.stage-view:not(.paper-only)')
-
-    follower4pre
-    .addDirection('v', 0, 100, parseInt(astScrollStart, 10), parseInt(astScrollEnd, 10))
-
-    // asterisk spreads
-    const pentas = document.querySelectorAll('.side')
-
-    follower4pre
-    .senses('v')
-    // match the first one
-    .set('parentStart',  addVh(startSpread, 0))
-    // match the first one
-    .set('parentEnd', addVh(endSpread, 0))
-    .listen((pos, obj) => {
+       .addScroller('.stage-view:not(.paper-only)')
+       .addDirection('v', 0, 100, parseInt(astScrollStart, 10), parseInt(astScrollEnd, 10), 'vh')
+    .addUpdater((pos, obj) => {
 	return explodePenta(pentas, pos, obj, 0, initPentaWidth()  )
-    })
+    }, startSpread, endSpread, 'vh' )
 
     const follower4 = master
 	  .scrolls('.penta-string')
-    
-    const pentaState = {}
-    const penta = qs('.penta')
-
-    // Pentagon rotation only
-    follower4
-      .senses('v')
-      .set('parentStart', rotateOneStart  )
-      .set('parentEnd', rotateOneEnd )
-      .listen(rotatePenta)
-
-    follower4
-    .senses('v')
-    // flies apart
-    .set('parentStart', explodeStart )    
-    .set('parentEnd', explodeEnd  )
-    .listen((pos, obj) => {
-
+      .addUpdater(
+	rotatePenta,
+	rotateOneStart,
+	rotateOneEnd,
+	'vh'
+      )
+    .addUpdater(( pos, obj) => {
 	if (pos < obj.get('pixels','ps' ) ) {
 	    return
 	}
 
         return explodePenta(pentas, pos, obj, initPentaWidth() , 900) 
-    })
-   
+    }, explodeStart, explodeEnd, 'vh')
+ 
     follower.init()
     follower4pre.init()
     follower4.init()
