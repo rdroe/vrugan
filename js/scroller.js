@@ -42,6 +42,7 @@ export default (id, senses, childEl, el) => {
         el: childEl,
         opts: new Map,
         listen: (fn) => {
+
             const ps = util(thisScroller.get('parentStart')).toPx()
             const pe = util(thisScroller.get('parentEnd')).toPx()
             thisScroller.set('pixels', 'ps', ps)
@@ -127,6 +128,7 @@ export default (id, senses, childEl, el) => {
             return thisScroller.set('responds', dir)
         },
         set: (arg1, arg2, arg3) => {
+            console.log('arg1, arg2', arg1, arg2, arg3)
             return thisScroller.setOpt(arg1, arg2, arg3)
         },
         get: (nsOrProp, prop) => {

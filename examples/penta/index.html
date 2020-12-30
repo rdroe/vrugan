@@ -42,65 +42,93 @@
     import { util, tr, offsetter, postfixer } from '../../js/globals.js'
     import { qs } from '../../../js/util/util.js'
     import { vrug } from '../../js/vrug.js'
-    import pentagonSpinner from '../../js/pentagonSpinner.js'
-    
-    const standardParentRange = 150
-    const ranges = offsetter()
+    import explodePenta from '../../js/explodePenta.js'
 
+    const ranges = offsetter()
     const vhStartPoint = postfixer(ranges.startPoint, 'vh')
     const vhEndPoint = postfixer(ranges.endPoint, 'vh')
-    
+
+    const addVh = (str, num) => {
+	return `${num + parseInt(str, 10) }vh`
+    }
+
     const master = vrug('body')
  
-    const follower3 = master
+    const follower = master
 	  .scrolls('.stage-view.paper-only')
 
     const initPentaWidth = (n) => {
-	const initAmt =  util('6vw').toPx()
-	const amt =  Math.max( initAmt, 20  );
+	const initAmt =  util('5vw').toPx()
+	const amt =  Math.max( initAmt, 15  );
 	return amt;
     }
+
+    const scrollOnscreen = vhStartPoint(50)
+    const scrollOnscreenEnd = vhEndPoint(125)
+
+    const scrollOffscreen = addVh(scrollOnscreenEnd, 1200)
+    const scrollOffscreenEnd = addVh(scrollOffscreen, 200)
+   
+    const astScrollStart = addVh(scrollOnscreenEnd, 0)
+    const astScrollEnd = addVh(astScrollStart, 175)
+
+    const startSpread = addVh(astScrollEnd, 300)
+    const endSpread = addVh(startSpread, 150)
+
+    const rotateOneStart = astScrollEnd
+    const rotateOneEnd = addVh(endSpread, 200)
+
+    const explodeStart = rotateOneEnd
+    const explodeEnd = addVh(rotateOneEnd, 350)
     
-    follower3    
+    // Coming onstage
+    follower    
      .senses('v')
      .responds('v')
      .set('start', '0vh')
      .set('end', '100vh')
-    
-    .set('parentStart', vhStartPoint(100))
-    .set('parentEnd', vhEndPoint(200))    
-    .listen()
+     .set('parentStart', scrollOnscreen)
+     .set('parentEnd', scrollOnscreenEnd)
+     .listen()
 
-    follower3
+    // scrolling off
+    follower
      .senses('v')
      .responds('v')
      .set('start', '100vh')
      .set('end', '200vh')
-    .set('parentStart', vhStartPoint(550))
-    .set('parentEnd', vhEndPoint(250) )
-    .listen()
+     .set('parentStart', scrollOffscreen)
+     .set('parentEnd', scrollOffscreenEnd )
+     .listen()
 
-    const follower4pre = master.scrolls('.stage-view:not(.paper-only)')
-    const PENTA_FACTOR = 1
-    const pentas = document.querySelectorAll('.side')
-    follower4pre
-     .senses('v')
-     .responds('v')
-    .set('parentStart', `${ranges.ends[0]}vh`)
-    .set('parentEnd', `${ranges.ends[0] + 125}vh`)    
-    .listen((pos, obj) => {
-	return pentagonSpinner(pentas, pos, obj, 0, initPentaWidth() * PENTA_FACTOR ) })
-
+    const follower4pre = master
+	  .scrolls('.stage-view:not(.paper-only)')
+ 
+    // asterisk scrolls onscreen
     follower4pre
      .senses('v')
      .responds('v')
      .set('start', '0vh')
      .set('end', '100vh')
-    
-    .set('parentStart', `${ranges.starts[0]}vh`)
-    .set('parentEnd', `${ranges.ends[0]}vh`)    
+    // match the first one
+    .set('parentStart',  astScrollStart)
+    // match the first one
+    .set('parentEnd', astScrollEnd)
     .listen()
-    
+
+    // asterisk spreads
+    const pentas = document.querySelectorAll('.side')
+
+    follower4pre
+    .senses('v')
+    // match the first one
+    .set('parentStart',  addVh(startSpread, 0))
+    // match the first one
+    .set('parentEnd', addVh(endSpread, 0))
+    .listen((pos, obj) => {
+	return explodePenta(pentas, pos, obj, 0, initPentaWidth()  )
+    })
+
     const follower4 = master
 	  .scrolls('.penta-string')
     
@@ -108,25 +136,23 @@
     const penta = qs('.penta')
 
     const updatePentaDom = (el, deg, colorOpac) => {
-	    el.style.transform =`rotateZ(${deg}deg)`
-	}
+      el.style.transform =`rotateZ(${deg}deg)`
+    }
 
     const spinHelper = (pos, ps, pe) => {
-	    const tot = pe - ps
-	    const prog = tr((pos - pe ) / tot * 1000) / 1000
-	    const modPos1 =  pos % ( 360 * 150)
-	    const multiplier = tr( modPos1 / (360* 10) * 360 *100 ) /100
-	const colorOpac = 0 - prog * 1.6	    //used to be returned as opacity
-	    return [ multiplier,  0 ]
-	}
-    
-    
-    follower4
-     .senses('v')
-    .set('parentStart', `${ranges.ends[0] +125}vh`)
-    .set('parentEnd', `${ranges.ends[0] + 275}vh`)    
+	const tot = pe - ps
+	const prog = tr((pos - pe) / tot * 1000) / 1000
+	const modPos1 =  pos % ( 360 * 150)
+	const multiplier = tr(modPos1 / (360* 10) * 360 * 100 ) /100
+	return multiplier
+    }
 
-    .listen((pos, obj) => {
+    // Pentagon rotation only
+    follower4
+      .senses('v')
+      .set('parentStart', rotateOneStart  )
+      .set('parentEnd', rotateOneEnd )
+      .listen((pos, obj) => {
 	
 	const el = obj.el
 
@@ -136,6 +162,7 @@
 	const ps = obj.get('pixels', 'ps')
 	const pe = obj.get('pixels', 'pe')
 	let spinParams
+	  
 	if (pos < ps) {
 	    spinParams = spinHelper(ps, ps, pe)
 	} else if (pos > pe) {
@@ -143,25 +170,29 @@
 	} else {
 	    spinParams = spinHelper(pos, ps, pe)
 	}
-	const [modPos, colorOpac] = spinParams
-	updatePentaDom(el, modPos, colorOpac)	    
+	  
+	// rotate only
+	updatePentaDom(el, spinParams)	    
     })
 
 
 
-    
     follower4
-     .senses('v')
-    .set('parentStart', `${ranges.ends[0] + 275}vh`)    
-    .set('parentEnd', vhEndPoint(500) )
+    .senses('v')
+    // flies apart
+    .set('parentStart', explodeStart )    
+    .set('parentEnd', explodeEnd  )
     .listen((pos, obj) => {
-      if (pos < obj.get('pixels', 'ps' ) ) {
-        return
-      }	
-      return pentagonSpinner(pentas, pos, obj, initPentaWidth() * PENTA_FACTOR, 5000) 
+
+	if (pos < obj.get('pixels','ps' ) ) {
+	    return
+	}
+
+        return explodePenta(pentas, pos, obj, initPentaWidth() , 900) 
     })
    
-  follower3.init()
+    follower.init()
+    follower4pre.init()
     follower4.init()
 
 

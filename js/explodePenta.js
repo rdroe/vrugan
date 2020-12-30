@@ -1,7 +1,7 @@
 import { tr } from './globals.js'
 
-
 const transform = (pos, ps, pe, min, max) => {
+
     const traversed = tr((pos - ps) / (pe - ps) * 1000) / 1000
     const traversedProportion = tr((max - min) * traversed)
     return min + traversedProportion
