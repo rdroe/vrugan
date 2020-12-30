@@ -18,6 +18,7 @@ class InvalidScrollParam extends TypeError {
 class CannotCloseNonexistentRange extends Error {
     constructor(...args) { super(...args) }
 }
+
 const toPxFromVw = (arg1) => {
     const parsed = parseInt(arg1, 10)
     if (`${parsed}vw` !== arg1) throw new InvalidScrollParam

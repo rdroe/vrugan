@@ -53,9 +53,9 @@ A<!DOCTYPE html>
     }
 
     const master = vrug('body')
- 
+    
     const follower = master
-	  .scrolls('.stage-view.paper-only')
+	  .addScroller('.stage-view.paper-only')
 
     const initPentaWidth = (n) => {
 	const initAmt =  util('5vw').toPx()
@@ -80,41 +80,21 @@ A<!DOCTYPE html>
 
     const explodeStart = rotateOneEnd
     const explodeEnd = addVh(rotateOneEnd, 350)
-
+   
     // Coming onstage
     follower    
-     .senses('v')
-     .responds('v')
-     .set('start', '0vh')
-     .set('end', '100vh')
-     .set('parentStart', scrollOnscreen)
-     .set('parentEnd', scrollOnscreenEnd)
-     .listen()
+    .addDirection('v', 0, 100, parseInt(scrollOnscreen), parseInt(scrollOnscreenEnd))
 
     // scrolling off
     follower
-     .senses('v')
-     .responds('v')
-     .set('start', '100vh')
-     .set('end', '200vh')
-     .set('parentStart', scrollOffscreen)
-     .set('parentEnd', scrollOffscreenEnd )
-     .listen()
+          .addDirection('v', 100, 200, parseInt(scrollOffscreen), parseInt(scrollOffscreenEnd))
 
-    const follower4pre = master
-	  .scrolls('.stage-view:not(.paper-only)')
- 
     // asterisk scrolls onscreen
+    const follower4pre = master
+	  .addScroller('.stage-view:not(.paper-only)')
+
     follower4pre
-     .senses('v')
-     .responds('v')
-     .set('start', '0vh')
-     .set('end', '100vh')
-    // match the first one
-    .set('parentStart',  astScrollStart)
-    // match the first one
-    .set('parentEnd', astScrollEnd)
-    .listen()
+    .addDirection('v', 0, 100, parseInt(astScrollStart, 10), parseInt(astScrollEnd, 10))
 
     // asterisk spreads
     const pentas = document.querySelectorAll('.side')
