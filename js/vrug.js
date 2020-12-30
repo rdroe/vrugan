@@ -1,5 +1,5 @@
 import { qs } from '/js/util/util.js'
-import { vrugs } from './globals.js'
+import { vrugs, asVw, asVh } from './globals.js'
 
 import follower from './follower.js'
 
@@ -11,6 +11,11 @@ export const vrug = (sel) => {
     const master = vrugFns(el)
     vrugs.set(el, master)
     return master
+}
+
+export const addScroller = (master, sel) => {
+    return master
+        .scrolls(sel)
 }
 
 const vrugFns = (el) => {
@@ -32,8 +37,11 @@ const vrugFns = (el) => {
             followers.forEach((foll) => {
                 foll.reactivate()
             })
+        },
+        addScroller: (...args) => {
+            const master = vrugs.get(el)
+            return addScroller(master, ...args)
         }
     }
 }
-
 

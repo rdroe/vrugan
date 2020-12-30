@@ -1,5 +1,5 @@
 
-import { vrugs, UPDATER, SCROLLER, VERTICAL, HORIZONTAL, assert } from './globals.js'
+import { vrugs, UPDATER, SCROLLER, VERTICAL, HORIZONTAL, assert, asVw, asVh } from './globals.js'
 import scroller from './scroller.js'
 import optionsMixin from './optionsMixin.js'
 import getEffectiveScrollers, { applicableScrollResult, fireApplicableUpdaters, getEffectiveUpdaters } from './getEffectiveScrollers.js'
@@ -11,6 +11,19 @@ const lookUpOrMake = (map, obj, wrapperFn) => {
     const wrapped = wrapperFn ? wrapperFn(obj) : new Map
     map.set(obj, wrapped) // wraps and sets it
     return wrapped
+}
+
+export const addDirection = (follower, dir, s, e, ps, pe) => {
+    const ownUnits = dir === 'h' ? asVw : asVh
+    follower
+        .senses('v')
+        .responds(dir)
+        .set('start', ownUnits(s))
+        .set('end', ownUnits(e))
+        .set('parentStart', asVw(ps))
+        .set('parentEnd', asVw(pe))
+        .listen()
+    return follower
 }
 
 export default (childEl, el) => {
@@ -120,6 +133,9 @@ export default (childEl, el) => {
         },
         doerWrapper: () => ({}),
         doer: () => ({}),
+        addDirection: (...args) => {
+            return addDirection(thisChild, ...args)
+        },
         ...optionsMixin(thisChild)
     })
 }

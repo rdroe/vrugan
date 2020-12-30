@@ -99,3 +99,6 @@ export const assert = (fn, msg) => { if (!fn()) throw new Invariant(msg) }
 export const qs = (sel) => {
     return document.querySelector(sel)
 }
+
+export const asVw = (n) => `${n}vw`
+export const asVh = (n) => `${n}vh`

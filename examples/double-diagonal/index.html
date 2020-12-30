@@ -36,7 +36,7 @@
 
     import { tr, offsetter, postfixer } from '../../js/globals.js'
     import { qs } from '../../../js/util/util.js'
-    import { vrug } from '../../js/vrug.js'
+    import {  vrug } from '../../js/vrug.js'
 
     
     const standardParentRange = 150
@@ -46,41 +46,22 @@
     const vhEndPoint = postfixer(ranges.endPoint, 'vh')
     
     const master = vrug('body')
-    
-    const asVw = (n) => `${n}vw`
-    const asVh = (n) => `${n}vh`
-    
-    const addDirection = (follower, dir, s, e, ps, pe, unit = 'vw') => {
-	const ownUnits = dir === 'h' ? asVw : asVh
-	console.log('add',dir, ownUnits(s),ownUnits(e),asVw(ps),asVw(pe) )
-	return follower
-	    .senses('v')
-	    .responds(dir)
-	    .set('start', ownUnits(s))
-	    .set('end', ownUnits(e))	
-	    .set('parentStart', asVw(ps)  )
-	    .set('parentEnd', asVw(pe) )    
-	    .listen()
-	
-    }
-    
-    const addScroller = (sel) => {
-	return  master
-	  .scrolls(sel)
-    }
-    
-    const follower0 = addScroller('.stage-view.from-right')
-    addDirection(follower0, 'h', 0, 100,0,100)
-    addDirection(follower0, 'v',  0, 45,25,50)
-    addDirection(follower0, 'v',  45,195,125,375)    
-   
-    const follower1 = addScroller('.stage-view.from-left')
-    const offset = 250
-    addDirection(follower1, 'h', 100, 0, offset, offset + 100)
-    addDirection(follower1, 'v',  0, 45,offset + 25, offset + 50)
-    addDirection(follower1, 'v',  45,195,offset + 125, offset + 375)
 
-    follower0.init()
+    const follower = master
+	  .addScroller('.stage-view.from-right')
+	  .addDirection( 'h', 0, 100,0,100)
+	  .addDirection( 'v',  0, 45,25,50)
+	  .addDirection( 'v',  45,195,125,375)
+    
+    const offset = 250
+    
+    const follower1 = master
+	  .addScroller('.stage-view.from-left')
+	  .addDirection( 'h', 100, 0, offset, offset + 100)
+	  .addDirection( 'v',  0, 45,offset + 25, offset + 50)
+	  .addDirection( 'v',  45,195,offset + 125, offset + 375)
+
+    follower.init()
     follower1.init()
     
   </script>
