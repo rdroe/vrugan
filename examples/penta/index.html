@@ -1,4 +1,4 @@
-<!DOCTYPE html>
+A<!DOCTYPE html>
 <head>
   <title>davo roe</title>
   <link href="stylesheets/vrugan.css" rel="stylesheet">   
@@ -147,12 +147,7 @@
 	return multiplier
     }
 
-    // Pentagon rotation only
-    follower4
-      .senses('v')
-      .set('parentStart', rotateOneStart  )
-      .set('parentEnd', rotateOneEnd )
-      .listen((pos, obj) => {
+    const rotatePenta = (pos, obj) => {
 	
 	const el = obj.el
 
@@ -173,7 +168,15 @@
 	  
 	// rotate only
 	updatePentaDom(el, spinParams)	    
-    })
+    }
+
+    
+    // Pentagon rotation only
+    follower4
+      .senses('v')
+      .set('parentStart', rotateOneStart  )
+      .set('parentEnd', rotateOneEnd )
+      .listen(rotatePenta)
 
 
 
@@ -194,7 +197,6 @@
     follower.init()
     follower4pre.init()
     follower4.init()
-
 
   </script>
 </body>
