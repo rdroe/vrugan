@@ -42,7 +42,7 @@ A<!DOCTYPE html>
     import { util, tr, offsetter, postfixer } from '../../js/globals.js'
     import { qs } from '../../../js/util/util.js'
     import { vrug } from '../../js/vrug.js'
-    import explodePenta from '../../js/explodePenta.js'
+    import explodePenta, { rotatePenta } from '../../js/explodePenta.js'
 
     const ranges = offsetter()
     const vhStartPoint = postfixer(ranges.startPoint, 'vh')
@@ -80,7 +80,7 @@ A<!DOCTYPE html>
 
     const explodeStart = rotateOneEnd
     const explodeEnd = addVh(rotateOneEnd, 350)
-    
+
     // Coming onstage
     follower    
      .senses('v')
@@ -135,50 +135,12 @@ A<!DOCTYPE html>
     const pentaState = {}
     const penta = qs('.penta')
 
-    const updatePentaDom = (el, deg, colorOpac) => {
-      el.style.transform =`rotateZ(${deg}deg)`
-    }
-
-    const spinHelper = (pos, ps, pe) => {
-	const tot = pe - ps
-	const prog = tr((pos - pe) / tot * 1000) / 1000
-	const modPos1 =  pos % ( 360 * 150)
-	const multiplier = tr(modPos1 / (360* 10) * 360 * 100 ) /100
-	return multiplier
-    }
-
-    const rotatePenta = (pos, obj) => {
-	
-	const el = obj.el
-
-	const rawPs = obj.get('parentStart')
-	const rawPe = obj.get('parentEnd')
-
-	const ps = obj.get('pixels', 'ps')
-	const pe = obj.get('pixels', 'pe')
-	let spinParams
-	  
-	if (pos < ps) {
-	    spinParams = spinHelper(ps, ps, pe)
-	} else if (pos > pe) {
-	    spinParams = spinHelper(pe, ps, pe)
-	} else {
-	    spinParams = spinHelper(pos, ps, pe)
-	}
-	  
-	// rotate only
-	updatePentaDom(el, spinParams)	    
-    }
-
-    
     // Pentagon rotation only
     follower4
       .senses('v')
       .set('parentStart', rotateOneStart  )
       .set('parentEnd', rotateOneEnd )
       .listen(rotatePenta)
-
-
 
     follower4
     .senses('v')
