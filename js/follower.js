@@ -33,7 +33,9 @@ export const addDirection = (follower, dir, s, e, ps, pe, senseUnit = 'vw') => {
 
     const toOwnUnits = dir === 'h' ? asVw : asVh
 
-
+    const parentStart = unitize(ps, senseUnit)
+    const parentEnd = unitize(pe, senseUnit)
+    console.log('directional', parentStart, parentEnd)
     follower
         .senses('v')
         .responds(dir)
@@ -45,12 +47,18 @@ export const addDirection = (follower, dir, s, e, ps, pe, senseUnit = 'vw') => {
     return follower
 }
 
-export const addUpdater = (follower, fn, ps, pe, overrideSenseUnits) => {
+export const addUpdater = (follower, fn, ps, pe, overrideSenseUnits = 'vw') => {
+
     console.log('ps, pe, override', ps, pe, overrideSenseUnits)
+
+    const parentStart = unitize(ps, overrideSenseUnits)
+    const parentEnd = unitize(pe, overrideSenseUnits)
+
+    console.log('updater', parentStart, parentEnd)
     follower
         .senses('v')
-        .set('parentStart', unitize(ps, overrideSenseUnits))
-        .set('parentEnd', unitize(pe, overrideSenseUnits))
+        .set('parentStart', parentStart)
+        .set('parentEnd', parentEnd)
         .listen(fn)
 
     return follower
@@ -118,6 +126,7 @@ export default (childEl, el) => {
             thisChild.scrollers.forEach((scr) => {
                 const type = scr.get('isUpdater') ? UPDATER : SCROLLER
                 if (type === UPDATER) {
+                    console.log('reactivate updater')
                     const fn = scr.get('fn')
                     scr.listen(fn)
                 } else {
@@ -167,6 +176,7 @@ export default (childEl, el) => {
             return addDirection(thisChild, ...args)
         },
         addUpdater: (...args) => {
+            console.log('args', args)
             return addUpdater(thisChild, ...args)
         },
         ...optionsMixin(thisChild)
