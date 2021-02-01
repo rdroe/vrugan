@@ -105,3 +105,14 @@ export const qs = (sel) => {
 
 export const asVw = (n) => `${n}vw`
 export const asVh = (n) => `${n}vh`
+
+const showScrollers_ = ({ inRangeScrollers: scrs } = { inRangeScrollers: [] }) => {
+    scrs.forEach(scr => {
+        scr.showScroller()
+    })
+}
+
+export const showScrollers = ({ scroller: s1 }, { scroller: s2 }) => {
+    showScrollers_(s1)
+    showScrollers_(s2)
+}

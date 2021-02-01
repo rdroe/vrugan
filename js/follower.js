@@ -1,5 +1,5 @@
 
-import { vrugs, UPDATER, SCROLLER, VERTICAL, HORIZONTAL, assert, asVw, asVh } from './globals.js'
+import { vrugs, UPDATER, SCROLLER, VERTICAL, HORIZONTAL, assert, asVw, asVh, showScrollers } from './globals.js'
 import scroller from './scroller.js'
 import optionsMixin from './optionsMixin.js'
 import getEffectiveScrollers, { applicableScrollResult, fireApplicableUpdaters, getEffectiveUpdaters } from './getEffectiveScrollers.js'
@@ -33,9 +33,6 @@ export const addDirection = (follower, dir, s, e, ps, pe, senseUnit = 'vw') => {
 
     const toOwnUnits = dir === 'h' ? asVw : asVh
 
-    const parentStart = unitize(ps, senseUnit)
-    const parentEnd = unitize(pe, senseUnit)
-    console.log('directional', parentStart, parentEnd)
     follower
         .senses('v')
         .responds(dir)
@@ -49,12 +46,9 @@ export const addDirection = (follower, dir, s, e, ps, pe, senseUnit = 'vw') => {
 
 export const addUpdater = (follower, fn, ps, pe, overrideSenseUnits = 'vw') => {
 
-    console.log('ps, pe, override', ps, pe, overrideSenseUnits)
-
     const parentStart = unitize(ps, overrideSenseUnits)
     const parentEnd = unitize(pe, overrideSenseUnits)
 
-    console.log('updater', parentStart, parentEnd)
     follower
         .senses('v')
         .set('parentStart', parentStart)
@@ -79,14 +73,16 @@ export default (childEl, el) => {
 
         const verticalScrollingData = getEffectiveScrollers(thisChild.scrollers, VERTICAL, pos)
         const horizontalScrollingData = getEffectiveScrollers(thisChild.scrollers, HORIZONTAL, pos)
-
+        showScrollers(verticalScrollingData, horizontalScrollingData)
         const vertResults = applicableScrollResult(pos, verticalScrollingData[SCROLLER])
 
         const horizResults = applicableScrollResult(pos, horizontalScrollingData[SCROLLER])
+
         const final = { scrollLeft: horizResults.scrollLeft, scrollTop: vertResults.scrollTop }
-        if (final.scrollTop === undefined && final.scrollLeft === undefined) {
-            throw new Error('No scroll results for ' + pos)
-        }
+        // if (final.scrollTop === undefined && final.scrollLeft === undefined) {
+        // throw new Error('No scroll results for ' + pos)
+        //}
+
         return final
     }
 
