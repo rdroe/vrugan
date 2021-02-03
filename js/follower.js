@@ -101,10 +101,10 @@ export default (childEl, el) => {
             const pos = el.scrollTop
 
             const { scrollTop, scrollLeft } = fireScrollers(pos)
-
-            childEl.scrollTop = typeof scrollTop === 'number' ? scrollTop : childEl.scrollTop
-            childEl.scrollLeft = typeof scrollLeft === 'number' ? scrollLeft : childEl.scrollLeft
-
+            if (childEl) {
+                childEl.scrollTop = typeof scrollTop === 'number' ? scrollTop : childEl.scrollTop
+                childEl.scrollLeft = typeof scrollLeft === 'number' ? scrollLeft : childEl.scrollLeft
+            }
 
         },
         [UPDATER]: () => {
@@ -117,12 +117,19 @@ export default (childEl, el) => {
         scrollers: new Map,
         doers: new Map,
         opts: new Map,
+        end: () => {
 
+            const pes = [...thisChild.scrollers.values()].map(scr => {
+
+                return parseInt(scr.get('parentEnd'), 10)
+            })
+            return Math.max(...pes)
+        },
         reactivate: () => {
             thisChild.scrollers.forEach((scr) => {
                 const type = scr.get('isUpdater') ? UPDATER : SCROLLER
                 if (type === UPDATER) {
-                    console.log('reactivate updater')
+
                     const fn = scr.get('fn')
                     scr.listen(fn)
                 } else {
@@ -172,7 +179,7 @@ export default (childEl, el) => {
             return addDirection(thisChild, ...args)
         },
         addUpdater: (...args) => {
-            console.log('args', args)
+
             return addUpdater(thisChild, ...args)
         },
         ...optionsMixin(thisChild)

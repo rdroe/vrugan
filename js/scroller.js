@@ -137,6 +137,9 @@ export default (id, senses, childEl, el) => {
         },
         showScroller: () => {
             const isVisible = thisScroller.get('isVisible')
+            if (!thisScroller.el) {
+                throw new Error('No el property on trying to showScroller')
+            }
             if (isVisible !== true) {
                 thisScroller.set('isVisible', true)
                 thisScroller.el.style.left = '0px'
