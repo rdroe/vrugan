@@ -3,6 +3,12 @@ import { vrugs, asVw, asVh } from './globals.js'
 
 import follower from './follower.js'
 
+class BadScrollerSelector extends Error {
+    constructor(...args) {
+        super(...args)
+    }
+}
+
 export const vrug = (sel) => {
 
     const el = qs(sel)
@@ -25,6 +31,9 @@ const vrugFns = (el) => {
         children: new Map,
         scrolls: (chSel) => {
             const chEl = qs(chSel)
+            if (!chEl) {
+                throw new BadScrollerSelector(chSel)
+            }
             const f = follower(chEl, el)
             const thisVrug = vrugs.get(el)
             window.removeEventListener('resize', thisVrug.resize)

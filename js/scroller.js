@@ -47,13 +47,13 @@ export default (id, senses, childEl, el) => {
             const pe = util(thisScroller.get('parentEnd')).toPx()
             thisScroller.set('pixels', 'ps', ps)
             thisScroller.set('pixels', 'pe', pe)
-            if (fn) { console.log('ps', ps, 'pe', pe) }
+
             const senseProp = senses === VERTICAL ? 'scrollTop' : 'scrollLeft'
             thisScroller.set('senseProp', senseProp)
             thisScroller.set('isActive', true)
             if (fn !== undefined) thisScroller.responds('n/a')
             if (fn !== undefined) return thisScroller.funcListen(fn)
-            console.log('scroller adding; ps, pe', ps, pe)
+
             getWrappedEl().activate(top)
             thisScroller.set('senses', senses)
             const s = util(thisScroller.get('start')).toPx()
@@ -134,6 +134,16 @@ export default (id, senses, childEl, el) => {
         },
         get: (nsOrProp, prop) => {
             return thisScroller.getOpt(nsOrProp, prop)
+        },
+        showScroller: () => {
+            const isVisible = thisScroller.get('isVisible')
+            if (!thisScroller.el) {
+                throw new Error('No el property on trying to showScroller')
+            }
+            if (isVisible !== true) {
+                thisScroller.set('isVisible', true)
+                thisScroller.el.style.left = '0px'
+            }
         },
         ...optionsMixin(getThisScroller())
     })
