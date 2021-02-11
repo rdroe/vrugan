@@ -1,6 +1,8 @@
-import { qs } from '/js/util/util.js'
-import { vrugs, asVw, asVh } from './globals.js'
 
+import { vrugs } from './globals.js'
+const qs = (arg) => {
+    return document.querySelector(arg)
+}
 import follower from './follower.js'
 
 class BadScrollerSelector extends Error {

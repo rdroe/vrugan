@@ -117,13 +117,38 @@ export default (childEl, el) => {
         scrollers: new Map,
         doers: new Map,
         opts: new Map,
-        end: () => {
-
+        _limit: (eOrS) => {
+            console.log('getting eOrS', thisChild)
+            assert(() => ['e', 's'].includes(eOrS), 'arg for limit most be "e" or "s" (for end or start) ')
             const pes = [...thisChild.scrollers.values()].map(scr => {
-
-                return parseInt(scr.get('parentEnd'), 10)
+                const propName = eOrS === 'e' ? 'parentEnd' : 'parentStart'
+                if (eOrS === 's') {
+                    console.log(scr)
+                }
+                return parseInt(scr.get(propName), 10)
             })
-            return Math.max(...pes)
+
+            return eOrS === 'e' ? Math.max(...pes) : Math.min(...pes)
+
+        },
+        end: () => {
+            return thisChild._limit('e')
+        },
+        start: () => {
+            return thisChild._limit('s')
+        },
+        nthStage: (n) => {
+            const all = [...thisChild.scrollers.values()]
+            const pes = all.reduce((accum, scr, idx) => {
+                const strtWithUnits = scr.get('parentStart')
+                const endWithUnits = scr.get('parentEnd')
+                const strt = parseInt(scr.get('parentStart'), 10)
+                return { ...accum, [strt]: [strtWithUnits, endWithUnits, scr] }
+
+            }, {})
+            const nth = Object.values(pes)[n]
+            if (!nth) throw new Error('Could not get an nth stage for a scroller; ' + `index: ${n}`)
+            return nth
         },
         reactivate: () => {
             thisChild.scrollers.forEach((scr) => {
