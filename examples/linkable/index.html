@@ -57,8 +57,11 @@
 	  .addScroller('.stage-view.from-left')
 	  .addDirection( 'h', 100, 0, offset, offset + 100)
 	  .addDirection( 'v',  0, 45,offset + 25, offset + 50)
-	  .addDirection( 'v',  45,195,offset + 125, offset + 375)
+	  .addDirection( 'v',  45, 195, offset + 125, offset + 375)
     follower1.setOpt('title', 'vrug-2')
+    /* follower1.setOpt('linkFn', (obj) => {
+	return [999999, 'vrug-2']
+    })*/
     follower.init()
     follower1.init()
     nav.init(document.location.hash, 1, 'e')

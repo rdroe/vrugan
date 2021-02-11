@@ -36,6 +36,7 @@ export const util = (arg1) => ({
         if (arg1.includes('vw/h')) {
             // landscape
             if (window.innerWidth > window.innerHeight) {
+
                 return util(`${parseInt(arg1)}vw`).toPx()
             } else {
                 // portrait

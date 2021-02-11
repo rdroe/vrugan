@@ -118,13 +118,9 @@ export default (childEl, el) => {
         doers: new Map,
         opts: new Map,
         _limit: (eOrS) => {
-            console.log('getting eOrS', thisChild)
             assert(() => ['e', 's'].includes(eOrS), 'arg for limit most be "e" or "s" (for end or start) ')
             const pes = [...thisChild.scrollers.values()].map(scr => {
                 const propName = eOrS === 'e' ? 'parentEnd' : 'parentStart'
-                if (eOrS === 's') {
-                    console.log(scr)
-                }
                 return parseInt(scr.get(propName), 10)
             })
 
@@ -136,6 +132,12 @@ export default (childEl, el) => {
         },
         start: () => {
             return thisChild._limit('s')
+        },
+        asLinkableRange: () => {
+            const linkFn = thisChild.getOpt('linkFn')
+
+            if (linkFn) return linkFn.call(thisChild)
+            return null
         },
         nthStage: (n) => {
             const all = [...thisChild.scrollers.values()]
