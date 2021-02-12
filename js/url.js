@@ -21,9 +21,9 @@ const getRange = (master, whichStage, sOrE) => {
             range[range.length] = asCustomRange
             return
         }
-        const rng = ch.nthStage(whichStage)
 
-        const end = util(rng[sOrE === 's' ? 0 : 1]).toPx()
+        const rng = ch.nthStage(whichStage)
+        const end = rng[sOrE === 's' ? 0 : 1]
         const ttl = ch.getOpt('title')
 
         range[range.length] = [end, ttl]
@@ -31,34 +31,35 @@ const getRange = (master, whichStage, sOrE) => {
 
     return range
 }
+
 const getCurr = (range, scr) => {
     let curr = null
     range.forEach(([end, ttl]) => {
-        if (scr >= end) {
+
+        if (parseInt(scr, 10) >= parseInt(end)) {
             curr = ttl
         }
     })
     return curr
 }
 
-const updateConditionally = (st, scr, idx, sOrE) => {
+const updateConditionally = (st, scrVh, idx, sOrE) => {
 
-    if (st.updated === scr) return
-
+    const scr = parseInt(scrVh, 10)
     const range = getRange(st.master, idx, sOrE)
     const curr = getCurr(range, scr) // look up current link name / title
-
     const newHash = curr === null
-        ? `${scr}`
-        : `${scr}/${curr}`
+        ? `${scrVh}`
+        : `${scrVh}/${curr}`
 
     const stateArg = `${st.root}#${newHash}`
-    st.updated = scr
+    st.updated = scrVh
     history.replaceState({}, document.title, stateArg)
+
 }
 
 const updateLocation = (idx, sOrE) => {
-    const scrolled = state.master.el.scrollTop
+    const scrolled = util(state.master.el.scrollTop).toVh()
     if (state.updated !== scrolled) {
         updateConditionally(state, scrolled, idx, sOrE)
     }
@@ -68,10 +69,10 @@ const getScrollCoords = (range, hash) => {
 
     let ret = 0
     let num, ttl
-    // hash is e.g. #321/vrug-1 or #vrug-1
+    // hash is e.g. #321vh/vrug-1 or #vrug-1
     const [numOrTtl, ttlOrUndef] = hash.split('/').map(str => str.replace('#', ''))
     if (ttlOrUndef) {
-        num = parseInt(numOrTtl)
+        num = util(numOrTtl).toPx()
         ttl = ttlOrUndef
     } else {
         ttl = numOrTtl
@@ -87,7 +88,18 @@ const getScrollCoords = (range, hash) => {
     })
     return ret
 }
+const scrollTo = (num) => {
+    const animScroll = () => {
 
+        const diff = document.body.scrollTop - num
+        document.body.scrollTop -= 400 * Math.sign(diff)
+
+        if (Math.abs(document.body.scrollTop - num) >= 200) {
+            window.requestAnimationFrame(animScroll)
+        } else { window.requestAnimationFrame(() => { document.body.scrollTop = num }) }
+    }
+    window.requestAnimationFrame(animScroll)
+}
 export default (mstr, root) => {
 
     state.root = `/${root}`
@@ -104,7 +116,7 @@ export default (mstr, root) => {
             const range = getRange(state.master, state.idx, state.startOrEnd)
 
             const coord = getScrollCoords(range, hash)
-            document.body.scrollTop = coord
+            scrollTo(coord)
         },
         listen: () => {
             setInterval(() => {

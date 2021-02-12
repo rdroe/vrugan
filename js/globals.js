@@ -50,6 +50,10 @@ export const util = (arg1) => ({
         const ret = tr(arg1 * 100 / window.innerWidth)
         return `${ret}vw`
     },
+    toVh: () => {
+        const ret = tr(arg1 * 100 / window.innerHeight)
+        return `${ret}vh`
+    }
 })
 
 

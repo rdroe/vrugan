@@ -102,6 +102,7 @@ export default (childEl, el) => {
 
             const { scrollTop, scrollLeft } = fireScrollers(pos)
             if (childEl) {
+                console.log('firing!', scrollTop)
                 childEl.scrollTop = typeof scrollTop === 'number' ? scrollTop : childEl.scrollTop
                 childEl.scrollLeft = typeof scrollLeft === 'number' ? scrollLeft : childEl.scrollLeft
             }
