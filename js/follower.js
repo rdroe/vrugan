@@ -4,6 +4,8 @@ import scroller from './scroller.js'
 import optionsMixin from './optionsMixin.js'
 import getEffectiveScrollers, { applicableScrollResult, fireApplicableUpdaters, getEffectiveUpdaters } from './getEffectiveScrollers.js'
 
+import { scrollToTitle } from './url.js'
+
 let cntr = 0
 class InvalidUnit extends Error { constructor(...a) { super(...a) } }
 
@@ -216,6 +218,9 @@ export default (childEl, el) => {
             const a = document.createElement('div')
             a.setAttribute('name', title)
             a.setAttribute('id', title)
+            a.setAttribute('aria-label', title)
+            a.setAttribute('aria-role', 'region')
+
             parElem.insertBefore(a, childEl)
             a.appendChild(childEl)
 
@@ -224,7 +229,7 @@ export default (childEl, el) => {
                 ev.preventDefault()
                 ev.stopPropagation()
                 a.setAttribute('id', '')
-                window.scrollToObject(title)
+                scrollToTitle(title)
                 const newUrl = `#${title}`
                 history.replaceState({}, document.title, newUrl)
 
