@@ -1,5 +1,7 @@
 import { util } from './globals.js'
+
 const MS_INTERVAL = 400
+const PIXELS_SCROLL_SPEED = 900
 const state = {
     idx: 0,
     startOrEnd: 'e',
@@ -98,15 +100,12 @@ const getScrollCoords = (range, hash) => {
 }
 
 
-
-window.scrollTo1 = (num) => {
+export const scrollToCoord = (target) => {
+    const num = Math.min(target, state.master.el.scrollHeight - PIXELS_SCROLL_SPEED)
     const animScroll = () => {
-
         const diff = document.body.scrollTop - num
-        document.body.scrollTop -= 900 * Math.sign(diff)
-
-
-        if (Math.abs(document.body.scrollTop - num) >= 450) {
+        document.body.scrollTop -= PIXELS_SCROLL_SPEED * Math.sign(diff)
+        if (Math.abs(document.body.scrollTop - num) >= Math.ceil(PIXELS_SCROLL_SPEED / 2)) {
             window.requestAnimationFrame(animScroll)
         } else {
             window.requestAnimationFrame(() => {
@@ -120,10 +119,11 @@ window.scrollTo1 = (num) => {
     }
     window.requestAnimationFrame(animScroll)
 }
-window.scrollToObject = (obj) => {
+
+export const scrollToTitle = (title) => {
     const range = getRange(state.master)
-    const target = getScrollCoords(range, `#${obj}`)
-    window.scrollTo1(target)
+    const target = getScrollCoords(range, `#${title}`)
+    scrollToCoord(target)
 }
 
 export default (mstr, root) => {
@@ -142,7 +142,7 @@ export default (mstr, root) => {
             const range = getRange(state.master, state.idx, state.startOrEnd)
 
             const coord = getScrollCoords(range, hash)
-            window.scrollTo1(coord)
+            scrollToCoord(coord)
             document.onfocus = (ev) => {
                 ev.preventDefault()
             }
@@ -151,19 +151,12 @@ export default (mstr, root) => {
             }
             window.addEventListener(
                 'hashchange', (ev) => {
-                    console.log('hash changed')
                     ev.preventDefault()
                     ev.stopPropagation()
                     document.scrollTop = util(state.updated).toPx()
                     const range = getRange(state.master, state.idx, state.startOrEnd)
-                    console.log('range:', range)
-
                     const coord = getScrollCoords(range, document.location.hash)
-                    console.log('scroll coords', coord)
-                    window.scrollTo1(coord)
-
-
-
+                    scrollToCoord(coord)
                 }, true)
         },
         listen: () => {
