@@ -79,9 +79,6 @@ export default (childEl, el) => {
         const horizResults = applicableScrollResult(pos, horizontalScrollingData[SCROLLER])
 
         const final = { scrollLeft: horizResults.scrollLeft, scrollTop: vertResults.scrollTop }
-        // if (final.scrollTop === undefined && final.scrollLeft === undefined) {
-        // throw new Error('No scroll results for ' + pos)
-        //}
 
         return final
     }
@@ -102,7 +99,7 @@ export default (childEl, el) => {
 
             const { scrollTop, scrollLeft } = fireScrollers(pos)
             if (childEl) {
-                console.log('firing!', scrollTop)
+
                 childEl.scrollTop = typeof scrollTop === 'number' ? scrollTop : childEl.scrollTop
                 childEl.scrollLeft = typeof scrollLeft === 'number' ? scrollLeft : childEl.scrollLeft
             }
@@ -137,7 +134,7 @@ export default (childEl, el) => {
         asLinkableRange: () => {
             const linkFn = thisChild.getOpt('linkFn')
 
-            if (linkFn) return linkFn.call(thisChild)
+            if (linkFn) return linkFn.call(null, thisChild)
             return null
         },
         nthStage: (n) => {
@@ -196,7 +193,7 @@ export default (childEl, el) => {
         },
         getIdentifier(dir) {
 
-            const id = `${dir} -${cntr} `
+            const id = `${dir}--${cntr} `
             cntr += 1
 
             return id
@@ -209,6 +206,35 @@ export default (childEl, el) => {
         addUpdater: (...args) => {
 
             return addUpdater(thisChild, ...args)
+        },
+        makeFocusable: (title, tabIndex = 0) => {
+            if (!title) return;
+
+            thisChild.setOpt('title', title)
+            const parElem = childEl.parentElement
+            if (parElem.tagName !== 'MAIN') return
+            const a = document.createElement('div')
+            a.setAttribute('name', title)
+            a.setAttribute('id', title)
+            parElem.insertBefore(a, childEl)
+            a.appendChild(childEl)
+
+            a.setAttribute('tabindex', tabIndex)
+            const setHash = (ev) => {
+                ev.preventDefault()
+                ev.stopPropagation()
+                a.setAttribute('id', '')
+                window.scrollToObject(title)
+                const newUrl = `#${title}`
+                history.replaceState({}, document.title, newUrl)
+
+                a.setAttribute('id', title)
+            }
+
+            a.onfocus = (...argz) => {
+                argz[0].preventDefault()
+                setHash.call(null, ...argz)
+            }
         },
         ...optionsMixin(thisChild)
     })

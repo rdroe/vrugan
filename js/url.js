@@ -9,7 +9,8 @@ const state = {
 }
 
 
-const getRange = (master, whichStage, sOrE) => {
+
+const getRange = window.getRange = (master, whichStage = state.idx, sOrE = state.startOrEnd) => {
 
     const arr = [...master.children.values()]
 
@@ -17,7 +18,6 @@ const getRange = (master, whichStage, sOrE) => {
     arr.forEach((ch) => {
         const asCustomRange = ch.asLinkableRange()
         if (asCustomRange) {
-
             range[range.length] = asCustomRange
             return
         }
@@ -64,6 +64,7 @@ const updateLocation = (idx, sOrE) => {
         updateConditionally(state, scrolled, idx, sOrE)
     }
 }
+
 // getScrollCoords from a comprehensive hash
 const getScrollCoords = (range, hash) => {
 
@@ -71,35 +72,60 @@ const getScrollCoords = (range, hash) => {
     let num, ttl
     // hash is e.g. #321vh/vrug-1 or #vrug-1
     const [numOrTtl, ttlOrUndef] = hash.split('/').map(str => str.replace('#', ''))
+    const testHash = `#${parseInt(numOrTtl, 10)}vh`
+
     if (ttlOrUndef) {
         num = util(numOrTtl).toPx()
         ttl = ttlOrUndef
+    } else if (testHash === hash) {
+        num = util(numOrTtl).toPx()
     } else {
         ttl = numOrTtl
     }
 
     if (num || num === 0) return num
 
-    range.forEach(([num, itmTtl]) => {
-        if (range > 0) return
+    range.forEach(([rngNum, itmTtl]) => {
+
+        if (ret > 0) return
         if (itmTtl === ttl) {
-            ret = num
+            ret = util(`${parseInt(rngNum) + 30}vh`).toPx()
         }
     })
+
+    if (typeof ret !== 'number') throw new TypeError('Exit check: Number is required.')
     return ret
 }
-const scrollTo = (num) => {
+
+
+
+window.scrollTo1 = (num) => {
     const animScroll = () => {
 
         const diff = document.body.scrollTop - num
-        document.body.scrollTop -= 400 * Math.sign(diff)
+        document.body.scrollTop -= 900 * Math.sign(diff)
 
-        if (Math.abs(document.body.scrollTop - num) >= 200) {
+
+        if (Math.abs(document.body.scrollTop - num) >= 450) {
             window.requestAnimationFrame(animScroll)
-        } else { window.requestAnimationFrame(() => { document.body.scrollTop = num }) }
+        } else {
+            window.requestAnimationFrame(() => {
+                document.body.scrollTop = num;
+
+                const vhIdx = util(num).toVh()
+                state.updated = `${vhIdx}vh`
+
+            })
+        }
     }
     window.requestAnimationFrame(animScroll)
 }
+window.scrollToObject = (obj) => {
+    const range = getRange(state.master)
+    const target = getScrollCoords(range, `#${obj}`)
+    window.scrollTo1(target)
+}
+
 export default (mstr, root) => {
 
     state.root = `/${root}`
@@ -116,7 +142,29 @@ export default (mstr, root) => {
             const range = getRange(state.master, state.idx, state.startOrEnd)
 
             const coord = getScrollCoords(range, hash)
-            scrollTo(coord)
+            window.scrollTo1(coord)
+            document.onfocus = (ev) => {
+                ev.preventDefault()
+            }
+            document.onfocusin = (ev) => {
+                ev.preventDefault()
+            }
+            window.addEventListener(
+                'hashchange', (ev) => {
+                    console.log('hash changed')
+                    ev.preventDefault()
+                    ev.stopPropagation()
+                    document.scrollTop = util(state.updated).toPx()
+                    const range = getRange(state.master, state.idx, state.startOrEnd)
+                    console.log('range:', range)
+
+                    const coord = getScrollCoords(range, document.location.hash)
+                    console.log('scroll coords', coord)
+                    window.scrollTo1(coord)
+
+
+
+                }, true)
         },
         listen: () => {
             setInterval(() => {
