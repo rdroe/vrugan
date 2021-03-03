@@ -48,6 +48,7 @@ const vrugFns = (el) => {
             followers.forEach((foll) => {
                 foll.reactivate()
             })
+            if (window.masterResizer) window.masterResizer()
         },
         addScroller: (...args) => {
             const master = vrugs.get(el)
