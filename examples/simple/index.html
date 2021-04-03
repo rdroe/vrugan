@@ -1,0 +1,70 @@
+<!DOCTYPE html>
+<head>
+  <title>davo roe</title>
+  <link href="stylesheets/vrugan.css" rel="stylesheet">   
+  <meta name="viewport" content="minimum-scale=1">  
+  <meta name="viewport" content="maximum-scale=1">  
+</head>
+<body>
+  <div class="body-bground">
+    <img class="body-bground-img" src="/bground/assets/poly-settings.png">
+  </div>
+  <div class="container">
+    <main>
+      <div class="stage-view zero">
+	<div class="stage-surface zero">
+	  <div class="paper zero">
+	    <h1>vrugan</h1>
+	    <h3 class="text">magic scrolls</h3>
+	  </div>
+	  <div class="divider zero"></div>
+	</div>
+      </div><!-- stage view -->
+    </main>
+    <div class="rect top subgrid // -1"></div>
+    <div class="rect side"></div>
+    <div class="text one"></div>
+    <div class="text two"></div>
+  </div>
+  <script type="module" src="/js/util/util.js"></script>
+  <script type="module">
+
+    import { tr, offsetter, postfixer } from '../../js/globals.js'
+    import { qs } from '../../../js/util/util.js'
+    import { vrug } from '../../js/vrug.js'
+
+    
+    const standardParentRange = 150
+    const ranges = offsetter()
+
+    const vhStartPoint = postfixer(ranges.startPoint, 'vh')
+    const vhEndPoint = postfixer(ranges.endPoint, 'vh')
+    
+    const master = vrug('body')
+ 
+    const follower0 = master
+     .scrolls('.stage-view.zero')
+ 
+    follower0
+     .senses('v')
+     .responds('v')
+     .set('start', '0vh')
+     .set('end', '100vh')
+    
+    .set('parentStart', vhStartPoint(100))
+    .set('parentEnd', vhEndPoint(200))    
+    .listen()
+
+    follower0
+     .senses('v')
+     .responds('v')
+     .set('start', '100vh')
+     .set('end', '200vh')
+    .set('parentStart', vhStartPoint(150))
+    .set('parentEnd', vhEndPoint(250) )
+    .listen()
+    
+    follower0.init()
+
+  </script>
+</body>

@@ -1,0 +1,130 @@
+<!DOCTYPE html>
+<head>
+  <title>davo roe</title>
+  <link href="stylesheets/vrugan.css" rel="stylesheet">   
+  <meta name="viewport" content="minimum-scale=1">  
+  <meta name="viewport" content="maximum-scale=1">   <script type="text/javascript" src="/bground/index.bundle.js"></script>   
+</head>
+<body>
+  <div class="body-bground">
+    <img class="body-bground-img" src="/bground/assets/poly-settings.png">
+  </div>
+  <div class="container">
+    <main>
+      <div class="stage-view zero">
+	<div class="stage-surface zero">
+	  <div class="paper zero">
+	    <h1>vrugan</h1>
+	    <h3 class="text">magic scrolls</h3>
+	  </div>
+	  <div class="divider zero"></div>
+	</div>
+      </div><!-- stage view -->
+      <div class="stage-view one">
+	<div class="stage-surface one">
+	  <div class="paper one">
+	    <h1>lorem</h1>
+	    <h3 class="text">ipsum</h3>
+	  </div>
+	  <div class="divider one"></div>
+	</div>
+      </div><!-- stage view -->      
+    </main>
+    <div class="rect top subgrid"></div>
+    <div class="rect side"></div>
+    <div class="text one"></div>
+    <div class="text two"></div>
+  </div>
+  <script type="text/javascript" src="/bground/poly-data.bundle.js"></script>
+  <script type="text/javascript" src="/bground/poly-data.bundle.js"></script>
+  <script type="text/javascript" src="/bground/poly-settings.bundle.js"></script>
+  <script type="text/javascript" src="/bground/vendors-node_modules_p5_lib_p5_min_js.bundle.js"></script>  
+  <script type="module" src="/js/util/util.js"></script>
+  <script type="module">
+  
+    import { tr, offsetter, postfixer } from '../../js/globals.js'
+    import { qs } from '../../../js/util/util.js'
+    import { vrug } from '../../js/vrug.js'
+
+    
+    const standardParentRange = 150
+    const ranges = offsetter()
+
+    const vhStartPoint = postfixer(ranges.startPoint, 'vh')
+    const vhEndPoint = postfixer(ranges.endPoint, 'vh')
+    
+    const master = vrug('body')
+ 
+    const follower0 = master
+     .scrolls('.stage-view.zero')
+    const scrollOnStart = vhStartPoint(100)
+    const scrollOnEnd = vhEndPoint(200)
+
+    // To set up background animation, make sure to
+    // - add bground-related style as in this example.
+    // - remove the background .png once all is loaded / as you start the animation
+
+    follower0
+     .senses('v')
+     .responds('v')
+     .set('start', '0vh')
+     .set('end', '100vh')
+
+    .set('parentStart', scrollOnStart)
+    .set('parentEnd', scrollOnEnd)
+    .listen()
+
+    const scrollOffStart = vhStartPoint(150)
+    const scrollOffEnd = vhEndPoint(250)
+
+    follower0
+     .senses('v')
+     .responds('v')
+     .set('start', '100vh')
+     .set('end', '200vh')
+    .set('parentStart', scrollOffStart)
+    .set('parentEnd', scrollOffEnd )
+    .listen()
+
+    const spinStart = parseInt(scrollOffEnd) - 25
+    const spinEnd = parseInt(scrollOffEnd) + 1825
+    
+    const follower1 = follower0.
+	  addUpdater((pos, obj) => {
+
+	      const pe = obj.get('pixels', 'pe')
+	      const ps = obj.get('pixels', 'ps')
+	      
+	      let translate
+	      if (pos < ps) {
+		   updateBackgroundTicker(0)  
+	      } else if (pos > pe) {
+		  updateBackgroundTicker(90)
+	      } else {
+		  document.querySelector('.body-bground-img') ? 	  document.querySelector('.body-bground-img').remove() : 'noop'
+		  
+		  console.log('should scroll', pos, ps, pe)
+		  const scrolled = Math.round( ( pos - pe) / (ps - pe) * 90 )
+		  console.log(scrolled)
+		   updateBackgroundTicker(scrolled)  
+	       }
+	  },
+		     spinStart,
+		     spinEnd,
+		     'vh')
+    
+    const follower2 = master
+	  .addScroller('.stage-view.one')
+	  .addDirection('v',
+			0, 100,
+			spinEnd + 25,
+			spinEnd + 505,
+			'vh')
+    
+          
+    follower0.init()
+    follower1.init()
+    follower2.init()
+    
+  </script>
+</body>

@@ -1,0 +1,176 @@
+
+div, main {
+    overflow: hidden;
+    box-sizing: border-box;
+}
+
+html {
+  overflow: hidden;
+  width: 100%;
+  height: 100%;
+  box-sizing: border-box;
+}
+
+:root {
+  font-size: 1.5vw;
+}
+
+body {
+  width: 100%;
+  height: 100%;
+  position: fixed;
+  overflow-y: scroll;
+  margin:0;
+  --stage-view-border-width: 2px;
+  --stage-surface-border-width: 1%;
+  /* scrollbar-width: none;  */
+}
+
+body::-webkit-scrollbar { 
+/*    display: none; */
+}
+
+.container {
+  width: 100%;
+  position: relative;
+  width: 100%; 
+  height: 2000vh;
+}
+
+div {
+  box-sizing: border-box;
+}
+
+.stage-view {
+   /* the fixed frame through which we see the scrolling element (which is the "surface").  */
+   pointer-events: none;
+   position: fixed;
+   bottom: 0;
+   left: 0;
+   height: 100vh;
+   width: 100vw;
+   border-style: solid;
+   border-color: orange;
+   border-width: 2px;
+   overflow-x: hidden;   
+}
+
+.stage-surface {
+    /* The overflow-er; mobile floor for visual elements*/
+    position: absolute;
+    width: 100%;
+    height: 300%;
+    overflow: hidden;
+    border-style: dashed;
+    border-width: 2vw;
+    border-color: darkgreen;
+}
+
+.paper {
+    font-family: helvetica, arial;
+    font-size: 200%;    
+    position: absolute;
+    background-color: white;
+    opacity: .86;
+    width: 80vw;
+    left: 10vw;
+    min-height: 0;
+    height: 100vh;
+    bottom: 100vh;
+}
+
+.paper.penta {
+    background-color: transparent;
+    overflow: visible;
+}
+
+.text {
+    margin-top: 20px;
+}
+
+.paper > h1 {
+    display: block;
+    font-size: max(5rem, 20vh);
+    margin-top: 2vh;
+}
+
+@media(orientation: landscape) {    
+    .paper > h1 {
+	display: block;
+	font-size: max(5rem, 20vh);
+	margin-top: 2vh;
+    }        
+}
+
+.body-bground > img.body-bground-img {
+    pointer-events: none;
+    width: 100%;
+    height: auto;
+    position: fixed;
+}
+
+/* penta stuff*/
+
+.stage-surface  {
+    --penta-width: max(8vw, 15px);
+    --penta-side-len: max(7vw, 30px);
+    --penta-side-width: max(2vw, 5px);
+}
+
+.penta .side {
+    width: var(--penta-side-len);	
+    height: var(--penta-side-width);
+    position: absolute;
+    border-radius: 2vw;
+    left: 50%;
+}
+
+.penta-string {
+    position: absolute;
+    width: 100%;
+    height: 100%;
+    overflow: visible;
+    transform-origin-x: 50%;
+}
+@media (orientation: landscape){
+    .penta .side {
+	top: 73%;
+    }
+    .penta-string {
+	transform-origin-y: 73%;
+    }
+}
+@media (orientation: portrait){
+    .penta .side {
+	top: 83vh;
+    }
+    .penta-string {
+	transform-origin-y: 83vh;
+    }
+}
+.s-1 {
+    transform:  translate(-50%, -50%) rotateZ(72deg) translateY(var(--penta-width));
+    background-color: lightblue;    
+}
+
+.s-2 {
+    transform:  translate(-50%, -50%) rotateZ(144deg) translateY(var(--penta-width));    
+    background-color: pink;
+}
+
+
+.s-3 {
+        transform: translate(-50%, -50%) rotateZ(216deg) translateY(var(--penta-width));
+    background-color: lightgray;
+}
+
+.s-4 {
+        transform:  translate(-50%, -50%) rotateZ(288deg) translateY(var(--penta-width));
+    background-color: green;
+}
+
+.s-5 {
+    transform:  translate(-50%, -50%)  translateY(var(--penta-width));
+    background-color: red;
+}
+
