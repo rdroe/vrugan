@@ -30,9 +30,9 @@
   </div>
 
   <script type="module">
-    import { tr, offsetter, postfixer } from '../../js/globals.js'
-    import {  vrug } from '../../js/vrug.js'
-    import url from '../../js/url.js'
+    import { tr, offsetter, postfixer } from '../js/globals.js'
+    import {  vrug } from '../js/vrug.js'
+    import url from '../js/url.js'
     
     const standardParentRange = 150
     const ranges = offsetter()
@@ -41,7 +41,7 @@
     const vhEndPoint = postfixer(ranges.endPoint, 'vh')
 
     const master = vrug('body')
-    const nav =  url(master, 'examples/linkable')
+    const nav =  url(master, 'linkable')
     
     const follower = master
 	  .addScroller('.stage-view.from-right')
