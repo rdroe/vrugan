@@ -14,4 +14,3 @@ stanford-corenlp-4.1.0
 *.awcache
 data
 dist
-tmp
