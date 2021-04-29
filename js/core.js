@@ -1,30 +1,16 @@
 
 import { vrugs } from './globals.js'
 import optionsMixin from './optionsMixin.js'
+import follower from './follower.js'
+
 const qs = (arg) => {
     return document.querySelector(arg)
 }
-import follower from './follower.js'
 
 class BadScrollerSelector extends Error {
     constructor(...args) {
         super(...args)
     }
-}
-
-export const vrug = (sel) => {
-
-    const el = qs(sel)
-    if (!el) throw new Error()
-    if (vrugs.has(el)) return vrugs.get(el)
-    const master = vrugFns(el)
-    vrugs.set(el, master)
-    return master
-}
-
-export const addScroller = (master, sel) => {
-    return master
-        .scrolls(sel)
 }
 
 const vrugFns = (el) => {
@@ -43,10 +29,6 @@ const vrugFns = (el) => {
             window.addEventListener('resize', thisVrug.resize)
             return f
         },
-        setMasterResizer: (fn) => {
-            const thisVrug = vrugs.get(el)
-            thisVrug.setOpt('master-resizer', fn)
-        },
         resize: () => {
             const thisVrug = vrugs.get(el)
             const followers = [...thisVrug.children.values()]
@@ -54,6 +36,7 @@ const vrugFns = (el) => {
             followers.forEach((foll) => {
                 foll.reactivate()
             })
+
             if (window.masterResizer) window.masterResizer()
 
         },
@@ -62,5 +45,19 @@ const vrugFns = (el) => {
             return addScroller(master, ...args)
         }
     }, { ...optionsMixin(vrugs.get(el)) })
+}
+
+export default (sel) => {
+    const el = qs(sel)
+    if (!el) throw new BadScrollerSelector(`Main element not found: ${sel}`)
+    if (vrugs.has(el)) return vrugs.get(el)
+    const master = vrugFns(el)
+    vrugs.set(el, master)
+    return master
+}
+
+const addScroller = (master, sel) => {
+    return master
+        .scrolls(sel)
 }
 

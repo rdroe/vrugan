@@ -11,25 +11,25 @@ html {
   box-sizing: border-box;
 }
 
-:root {
-  font-size: 1.5vw;
-}
-
 body {
   width: 100%;
   height: 100%;
   position: fixed;
   overflow-y: scroll;
   margin:0;
-  --stage-view-border-width: 0px;
-  --stage-surface-border-width: 0px;
 }
 
 .container {
   width: 100%;
   position: relative;
   width: 100%; 
-  height: 1300vh;
+  height: 500vh;
+}
+
+@media(orientation: landscape) {
+  .container{
+      height: 500vw;
+  }
 }
 
 div {
@@ -44,9 +44,6 @@ div {
    left: 0;
    height: 100vh;
    width: 100vw;
-   border-style: solid;
-   border-color: orange;
-   border-width: var(--stage-view-border-width);
    overflow-x: hidden;
 }
 
@@ -54,9 +51,6 @@ div {
     /* The overflow-er; mobile floor for visual elements*/
     position: absolute;
     overflow: hidden;
-    border-style: dashed;
-    border-width: var(--stage-surface-border-width);
-    border-color: darkgreen;
 }
 
 .stage-surface {
@@ -73,7 +67,7 @@ div {
     opacity: .86;
     width: 80vw;
     min-height: 0;
-    bottom: calc(150vh - var(--stage-view-border-width) - var(--stage-surface-border-width));
+    bottom: 150vh;
     height: 100vh;
 }
 
@@ -106,11 +100,3 @@ div {
 	margin-top: 2vh;
     }        
 }
-
-.body-bground > img.body-bground-img {
-    pointer-events: none;
-    width: 100%;
-    height: auto;
-    position: fixed;
-}
-
