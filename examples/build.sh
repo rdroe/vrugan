@@ -10,6 +10,7 @@ cp -r ../index.js tmp/index.js
 cp -r ../js tmp/js
 cp -r double-diagonal tmp/double-diagonal
 cp -r linkable tmp/linkable
+cp -r simple-api tmp/simple-api
 cp index.html tmp/
 cp demo.js tmp/
 

@@ -122,3 +122,17 @@ export const showScrollers = ({ scroller: s1 }, { scroller: s2 }) => {
     showScrollers_(s1)
     showScrollers_(s2)
 }
+
+export const unitize = (anArg, u) => {
+
+    if (!u) throw new InvalidUnit
+
+    if (typeof (anArg) === 'number') {
+        return `${anArg}${u}`
+    }
+
+    const parsedToInt = parseInt(anArg, 10)
+    const candidateConversion = `${parsedToInt}${u}`
+
+    return candidateConversion
+}

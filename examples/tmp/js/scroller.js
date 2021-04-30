@@ -2,7 +2,9 @@
 import {
     VERTICAL, LESS, GREATER, IN_RANGE,
     UPDATER,
-    vrugs, util, tr
+    vrugs, util, tr,
+    asVh, asVw,
+    unitize
 } from './globals.js'
 
 import optionsMixin from './optionsMixin.js'
@@ -145,6 +147,22 @@ export default (id, senses, childEl, el) => {
                 thisScroller.el.style.left = '0px'
             }
         },
+        width: (w) => {
+            const resp = thisScroller.get('responds')
+            const toOwnUnit = resp === 'h' ? asVw : asVh
+            return thisScroller
+        },
+        height: (h) => {
+            const resp = thisScroller.get('responds')
+            const toOwnUnit = resp === 'h' ? asVw : asVh
+            return thisScroller
+        },
+        on: (ps, pe) => {
+            thisScroller.set('parentStart', unitize(ps, 'vh'))
+            thisScroller.set('parentEnd', unitize(pe, 'vh'))
+            return thisScroller
+        },
+
         ...optionsMixin(getThisScroller())
     })
 }

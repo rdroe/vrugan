@@ -1,0 +1,37 @@
+<!DOCTYPE html>
+<head>
+  <title>diagonal vrugan</title>
+  <link href="stylesheets/vrugan.css" rel="stylesheet">   
+  <meta name="viewport" content="minimum-scale=1">  
+  <meta name="viewport" content="maximum-scale=1">  
+ </head>
+<body>
+  <script type="module">
+
+    import vrug from '../index.js'
+    import { tr, offsetter, postfixer } from '../js/globals.js'
+
+    // should assume "body" gets 100%, 100% 
+    const master = vrug('body')
+
+    
+    const follower = master
+	  .vertical(-100, 100)
+          .on(250, 350)
+          .listen()
+          
+    
+    /*    
+    const offset = 250
+    
+    const follower1 = master
+	  .addScroller('.stage-view.from-left')
+	  .addDirection( 'h', 100, 0, offset, offset + 100)
+	  .addDirection( 'v',  0, 45,offset + 25, offset + 50)
+	  .addDirection( 'v',  45,195,offset + 125, offset + 375)
+
+    follower.init()
+    follower1.init()
+*/
+  </script>
+</body>

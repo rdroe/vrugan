@@ -1,5 +1,5 @@
 
-import { vrugs, UPDATER, SCROLLER, VERTICAL, HORIZONTAL, assert, asVw, asVh, showScrollers } from './globals.js'
+import { vrugs, UPDATER, SCROLLER, VERTICAL, HORIZONTAL, assert, asVw, asVh, showScrollers, unitize } from './globals.js'
 import scroller from './scroller.js'
 import optionsMixin from './optionsMixin.js'
 import getEffectiveScrollers, { applicableScrollResult, fireApplicableUpdaters, getEffectiveUpdaters } from './getEffectiveScrollers.js'
@@ -17,20 +17,7 @@ const lookUpOrMake = (map, obj, wrapperFn) => {
     return wrapped
 }
 
-const unitize = (anArg, u) => {
-
-    if (!u) throw new InvalidUnit
-
-    if (typeof (anArg) === 'number') {
-        return `${anArg}${u}`
-    }
-
-    const parsedToInt = parseInt(anArg, 10)
-    const candidateConversion = `${parsedToInt}${u}`
-
-    return candidateConversion
-}
-
+// is this export needed?
 export const addDirection = (follower, dir, s, e, ps, pe, senseUnit = 'vw') => {
 
     const toOwnUnits = dir === 'h' ? asVw : asVh

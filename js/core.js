@@ -2,6 +2,7 @@
 import { vrugs } from './globals.js'
 import optionsMixin from './optionsMixin.js'
 import follower from './follower.js'
+import simpleApi from './simple-api.js'
 
 const qs = (arg) => {
     return document.querySelector(arg)
@@ -19,10 +20,11 @@ const vrugFns = (el) => {
         el,
         children: new Map,
         scrolls: (chSel) => {
-            const chEl = qs(chSel)
+            const chEl = typeof chSel === 'string' ? qs(chSel) : chSel
             if (!chEl) {
                 throw new BadScrollerSelector(chSel)
             }
+
             const f = follower(chEl, el)
             const thisVrug = vrugs.get(el)
             window.removeEventListener('resize', thisVrug.resize)
@@ -44,7 +46,10 @@ const vrugFns = (el) => {
             const master = vrugs.get(el)
             return addScroller(master, ...args)
         }
-    }, { ...optionsMixin(vrugs.get(el)) })
+    },
+        { ...simpleApi(el) },
+        { ...optionsMixin(vrugs.get(el)) }
+    )
 }
 
 export default (sel) => {
