@@ -74,12 +74,20 @@ const simpleContext = (view, surface, follower, master, defaults) => {
         view.style.height = '100vh'
         view.style.pointerEvents = 'none'
 
+
         scroller.responds('v')
         scroller.set('start', s)
         scroller.set('end', e)
         scroller.set('parentStart', `${ps}vh`)
         scroller.set('parentEnd', `${pe}vh`)
         scroller.listen()
+        const scroller2 = follower.senses('v')
+        scroller2.responds('v')
+        scroller2.set('start', e)
+        scroller2.set('end', s)
+        scroller2.set('parentStart', `${pe + 1}vh`)
+        scroller2.set('parentEnd', `${pe + 90}vh`)
+        scroller2.listen()
     }
 
     return {

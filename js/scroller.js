@@ -100,11 +100,7 @@ export default (id, senses, childEl, el) => {
                 const traversed = (pos - ps)
                 const scaledTraversal = tr(traversed * ratio)
 
-                if (!doInvert) {
-                    return s + scaledTraversal
-                }
-
-                return scaledTraversal
+                return s + scaledTraversal
             } else if (pos <= ps) {
                 return s
             } else {

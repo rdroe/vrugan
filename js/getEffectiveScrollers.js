@@ -5,17 +5,21 @@ const LEAST_GREATER_THAN = 'leastGreaterThan'
 class MismatchedScrollResults extends Error { }
 
 const gltCompare = ([cham], [chal]) => {
-    if (!cham) return false
+
+    if (!cham) { return true }
+    if (!chal) { return false }
+
     const champScore = cham.getOpt('pixels', 'pe')
     const chalScore = chal.getOpt('pixels', 'pe')
     return chalScore > champScore
-
 }
 
 const lgtCompare = ([cham], [chal]) => {
-    if (!cham) return false
-    const champScore = cham.getOpt('pixels', 'pe')
-    const chalScore = chal.getOpt('pixels', 'pe')
+
+    if (!cham) { return true }
+    if (!chal) { return false }
+    const champScore = cham.getOpt('pixels', 'ps')
+    const chalScore = chal.getOpt('pixels', 'ps')
     return chalScore < champScore
 }
 
