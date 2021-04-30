@@ -10,17 +10,12 @@
 
     import vrug from '../js/index.js'
     import { tr, offsetter, postfixer } from '../js/globals.js'
-
+    import simple from '../js/simple-api.js'
     // should assume "body" gets 100%, 100% 
     const master = vrug('body')
 
-    
-    const follower = master
-	  .vertical(-100, 100)
-          .on(250, 350)
-          .listen()
-          
-    
+    const simpleCtx = simple(document.querySelector('body')).fromBelow(100, 200)
+    simpleCtx.init()
     /*    
     const offset = 250
     

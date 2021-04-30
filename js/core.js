@@ -65,4 +65,3 @@ const addScroller = (master, sel) => {
     return master
         .scrolls(sel)
 }
-

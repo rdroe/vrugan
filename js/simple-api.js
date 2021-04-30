@@ -43,8 +43,104 @@ const positionSurface = (surfaceEl, startPos, endPos, dir = 'v') => {
         }
     } else throw new Error('no horiz position yet')
 }
+
+const simpleContext = (view, surface, follower, master, defaults) => {
+    const scrollersToAdd = []
+
+    const addDefaultScroller = () => {
+        const {
+            ps, pe,
+            s, e,
+            w, h,
+            placement
+        } = defaults
+        const [propName, val] = placement
+
+        const scroller = follower.senses('v')
+
+        surface.style.height = h
+        surface.style.width = w
+        surface.style[propName] = val
+        surface.style.backgroundColor = 'aliceblue'
+        surface.style.position = 'absolute'
+        surface.style.display = 'flex'
+        surface.innerHTML = '<div>my thing</div>'
+        surface.style.textAlign = 'vertical'
+        surface.style.alignItems = 'center'
+        surface.style.justifyContent = 'center'
+
+        view.style.position = 'fixed'
+        view.style.width = '100vw'
+        view.style.height = '100vh'
+        view.style.pointerEvents = 'none'
+
+        scroller.responds('v')
+        scroller.set('start', s)
+        scroller.set('end', e)
+        scroller.set('parentStart', `${ps}vh`)
+        scroller.set('parentEnd', `${pe}vh`)
+        scroller.listen()
+    }
+
+    return {
+        addScroller: (params) => {
+            scrollersToAdd.push(params)
+        },
+        master,
+        view,
+        surface,
+        height: (w) => {
+        },
+        width: (h) => {
+        },
+        start: (s) => {
+        },
+        end: (e) => {
+        },
+        init: () => {
+            if (scrollersToAdd.length === 0) {
+                addDefaultScroller()
+            }
+        }
+    }
+
+}
+
 export default (el) => {
     return {
+        // make a new follower
+        fromBelow: (ps = -100, pe = -100) => {
+            const thisVrug = vrugs.get(el)
+            const idx = thisVrug.children.size
+            const [view, surface] = createScrollerElem(thisVrug.el, idx)
+
+            /*
+            const surfaceHeight = 50
+
+            surface.style.borderStyle = 'solid'
+            surface.style.width = '100px'
+            surface.style.backgroundColor = 'aliceblue'
+            surface.style.position = 'absolute'
+            surface.style.height = `${surfaceHeight}vh`
+
+            view.style.width = '100vw'
+
+            const h1 = 100 // above 
+            const h2 = 100 // below
+            const h3 = (0 - s) + surfaceHeight
+            const height = h1 + h3 + h2
+
+            const top = h1 + s
+            surface.style.top = `${top}vh`
+
+            view.style.position = 'fixed'
+            view.style.height = `${height}vh`
+            */
+
+            const follower = thisVrug.scrolls(view)
+
+            return simpleContext(view, surface, follower, thisVrug, { ps, pe, s: asVh(0), e: asVh(100), h: '300vh', w: '100vw', placement: ['top', '0vh'] })
+        },
         vertical: (s, e) => {
 
             const thisVrug = vrugs.get(el)
