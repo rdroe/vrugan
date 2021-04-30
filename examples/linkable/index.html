@@ -30,7 +30,7 @@
   </div>
 
   <script type="module">
-    import vrug, { tr, offsetter, postfixer, url}  from '../index.js'
+    import vrug, { tr, offsetter, postfixer, url}  from '../js/index.js'
 
     const standardParentRange = 150
     const ranges = offsetter()
@@ -39,7 +39,7 @@
     const vhEndPoint = postfixer(ranges.endPoint, 'vh')
 
     const master = vrug('body')
-    const nav =  url.nav(master, 'linkable')
+    const nav =  url.nav(master, 'linkable/index.html')
 
     const follower = master
 	  .addScroller('.stage-view.from-right')

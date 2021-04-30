@@ -8,10 +8,12 @@
   "license": "MIT",
   "private": false,
   "devDependencies": {
+    "connect": "^3.7.0",
+    "nodemon": "^2.0.7",
     "serve-static": "^1.14.1"
   },
   "scripts": {
-      "examples": "cd examples && bash build.sh && cd .. && node examples/tmp/demo.js",
-      "clean-examples": "rm -r examples/tmp"
+    "examples": "cd examples && bash build.sh && cd .. && node examples/tmp/demo.js",
+    "clean-examples": "rm -r examples/tmp"
   }
 }
