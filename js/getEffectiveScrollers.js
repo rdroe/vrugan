@@ -121,6 +121,7 @@ export const fireApplicableUpdaters = (pos, data) => {
 const augmentScrollResult = (pos, res, [scroller, scrollResult]) => {
     if (!scroller) return res
     if (typeof scrollResult !== 'number' || [Infinity, -Infinity].includes(scrollResult)) return res
+
     if (scroller.get('responds') == VERTICAL) {
         // vertical case; overwrite the undefined scrollTop.
         if (res.scrollTop === undefined) res.scrollTop = scrollResult

@@ -16,7 +16,7 @@ const createOrGetMainSurface = (masterEl) => {
     containerEl.setAttribute('class', 'container')
     containerEl.style.width = '100%'
     containerEl.style.position = 'relative'
-    containerEl.height = '500vh'
+    containerEl.style.height = '1900vh'
     return containerEl
 }
 
@@ -33,27 +33,21 @@ const createScrollerElem = (masterEl, idx) => {
     return [stageView, stageSurface]
 }
 
-const positionSurface = (surfaceEl, startPos, endPos, dir = 'v') => {
-    let top = 0
-    let left = 0
-    if (dir === 'v') {
-        const travelDir = (startPos > endPos) ? 'd' : 'u'
-        if (travelDir === 'u') {
-
-        }
-    } else throw new Error('no horiz position yet')
-}
 
 const simpleContext = (view, surface, follower, master, defaults) => {
     const scrollersToAdd = []
 
     const addDefaultScroller = () => {
         const {
+            responds,
             ps, pe,
             s, e,
             w, h,
-            placement
+            placement,
+            out,
+            trace,
         } = defaults
+
         const [propName, val] = placement
 
         const scroller = follower.senses('v')
@@ -61,10 +55,10 @@ const simpleContext = (view, surface, follower, master, defaults) => {
         surface.style.height = h
         surface.style.width = w
         surface.style[propName] = val
-        surface.style.backgroundColor = 'aliceblue'
+
         surface.style.position = 'absolute'
         surface.style.display = 'flex'
-        surface.innerHTML = '<div>my thing</div>'
+        surface.innerHTML = '<h4>vrugan</h4>'
         surface.style.textAlign = 'vertical'
         surface.style.alignItems = 'center'
         surface.style.justifyContent = 'center'
@@ -75,19 +69,28 @@ const simpleContext = (view, surface, follower, master, defaults) => {
         view.style.pointerEvents = 'none'
 
 
-        scroller.responds('v')
+        scroller.responds(responds)
         scroller.set('start', s)
         scroller.set('end', e)
         scroller.set('parentStart', `${ps}vh`)
         scroller.set('parentEnd', `${pe}vh`)
+
         scroller.listen()
-        const scroller2 = follower.senses('v')
-        scroller2.responds('v')
-        scroller2.set('start', e)
-        scroller2.set('end', s)
-        scroller2.set('parentStart', `${pe + 1}vh`)
-        scroller2.set('parentEnd', `${pe + 90}vh`)
-        scroller2.listen()
+        if (trace) {
+            surface.style.borderStyle = 'dashed'
+        }
+
+        if (out === true) {
+            const s2 = follower.senses('v')
+            s2.responds(responds)
+            s2.set('start', e)
+            s2.set('end', s)
+            s2.set('parentStart', `${pe + 1}vh`)
+            s2.set('parentEnd', `${pe + 100}vh`)
+            s2.listen()
+
+        }
+        follower.init()
     }
 
     return {
@@ -113,76 +116,131 @@ const simpleContext = (view, surface, follower, master, defaults) => {
     }
 
 }
+const createFollower = (el) => {
+    const thisVrug = vrugs.get(el)
+    const idx = thisVrug.children.size
+    const [view, surface] = createScrollerElem(thisVrug.el, idx)
+    const follower = thisVrug.scrolls(view)
+    return {
+        thisVrug,
+        idx,
+        view,
+        surface,
+        follower
+    }
+}
 
 export default (el) => {
+
     return {
         // make a new follower
-        fromBelow: (ps = -100, pe = -100) => {
-            const thisVrug = vrugs.get(el)
-            const idx = thisVrug.children.size
-            const [view, surface] = createScrollerElem(thisVrug.el, idx)
+        fromBelow: (ps, pe) => {
+            const { view, surface, thisVrug, follower } = createFollower(el)
 
-            /*
-            const surfaceHeight = 50
-
-            surface.style.borderStyle = 'solid'
-            surface.style.width = '100px'
-            surface.style.backgroundColor = 'aliceblue'
-            surface.style.position = 'absolute'
-            surface.style.height = `${surfaceHeight}vh`
-
-            view.style.width = '100vw'
-
-            const h1 = 100 // above 
-            const h2 = 100 // below
-            const h3 = (0 - s) + surfaceHeight
-            const height = h1 + h3 + h2
-
-            const top = h1 + s
-            surface.style.top = `${top}vh`
-
-            view.style.position = 'fixed'
-            view.style.height = `${height}vh`
-            */
-
-            const follower = thisVrug.scrolls(view)
-
-            return simpleContext(view, surface, follower, thisVrug, { ps, pe, s: asVh(0), e: asVh(100), h: '300vh', w: '100vw', placement: ['top', '0vh'] })
+            return simpleContext(
+                view,
+                surface,
+                follower,
+                thisVrug,
+                {
+                    caller: 'b',
+                    responds: 'v',
+                    ps,
+                    pe,
+                    s: asVh(0),
+                    e: asVh(100),
+                    h: '300vh',
+                    w: '100vw',
+                    placement: ['top', '0vh'],
+                    out: true
+                }
+            )
         },
-        vertical: (s, e) => {
+        fromLeft: (ps, pe) => {
+            const { view, surface, thisVrug, follower } = createFollower(el)
+            return simpleContext(
+                view,
+                surface,
+                follower,
+                thisVrug,
+                {
+                    caller: 'l',
+                    responds: 'h',
+                    ps,
+                    pe,
+                    s: asVw(200),
+                    e: asVw(0),
+                    h: '100vh',
+                    w: '300vw',
+                    placement: ['left', '0']
 
-            const thisVrug = vrugs.get(el)
-            const idx = thisVrug.children.size
-            const [view, surface] = createScrollerElem(thisVrug.el, idx)
+                }
+            )
+        },
+        // make a new follower
+        fromTop: (ps, pe) => {
+            const { view, surface, thisVrug, follower } = createFollower(el)
 
-            const surfaceHeight = 50
+            return simpleContext(
+                view,
+                surface,
+                follower,
+                thisVrug,
+                {
+                    caller: 't',
+                    responds: 'v',
+                    ps,
+                    pe,
+                    s: asVh(200),
+                    e: asVh(100),
+                    h: '300vh',
+                    w: '100vw',
+                    placement: ['top', '0vh'],
+                    out: true
+                }
+            )
+        },
+        fromLeft: (ps, pe) => {
+            const { view, surface, thisVrug, follower } = createFollower(el)
+            return simpleContext(
+                view,
+                surface,
+                follower,
+                thisVrug,
+                {
+                    caller: 'l',
+                    responds: 'h',
+                    ps,
+                    pe,
+                    s: asVw(200),
+                    e: asVw(0),
+                    h: '100vh',
+                    w: '300vw',
+                    placement: ['left', '0']
 
-            surface.style.borderStyle = 'solid'
-            surface.style.width = '100px'
-            surface.style.backgroundColor = 'aliceblue'
-            surface.style.position = 'absolute'
-            surface.style.height = `${surfaceHeight}vh`
-
-            view.style.width = '100vw'
-
-            const h1 = 100 // above 
-            const h2 = 100 // below
-            const h3 = (0 - s) + surfaceHeight
-            const height = h1 + h3 + h2
-
-            const top = h1 + s
-            surface.style.top = `${top}vh`
-
-            view.style.position = 'fixed'
-            view.style.height = `${height}vh`
-            const follower = thisVrug.scrolls(view)
-            const scroller = follower.senses('v')
-
-            scroller.responds('v')
-            scroller.set('start', asVh(s))
-            scroller.set('end', asVh(e))
-
-            return scroller
-        }
+                }
+            )
+        },
+        fromRight: (ps, pe) => {
+            const { view, surface, thisVrug, follower } = createFollower(el)
+            return simpleContext(
+                view,
+                surface,
+                follower,
+                thisVrug,
+                {
+                    caller: 'r',
+                    responds: 'h',
+                    ps,
+                    pe,
+                    s: asVw(0),
+                    e: asVw(200),
+                    h: '100vh',
+                    w: '300vw',
+                    placement: ['left', '0'],
+                    out: true,
+                }
+            )
+        },
     }
 }

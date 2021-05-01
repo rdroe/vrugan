@@ -7,27 +7,22 @@
  </head>
 <body>
   <script type="module">
-
+    // this is a work in progress: a staging ground for the simpler api.
     import vrug from '../js/index.js'
     import { tr, offsetter, postfixer } from '../js/globals.js'
+    
     import simple from '../js/simple-api.js'
-    // should assume "body" gets 100%, 100% 
+    
     const master = vrug('body')
 
     const simpleCtx = simple(document.querySelector('body')).fromBelow(100, 200)
-    
+      const simpleCtx2 = simple(document.querySelector('body')).fromLeft(201, 300)
+    const simpleCtx3 = simple(document.querySelector('body')).fromTop(301, 400)
+    const simpleCtx4 = simple(document.querySelector('body')).fromRight(401, 500)
     simpleCtx.init()
-    /*    
-    const offset = 250
-    
-    const follower1 = master
-	  .addScroller('.stage-view.from-left')
-	  .addDirection( 'h', 100, 0, offset, offset + 100)
-	  .addDirection( 'v',  0, 45,offset + 25, offset + 50)
-	  .addDirection( 'v',  45,195,offset + 125, offset + 375)
+    simpleCtx2.init()
+    simpleCtx3.init()
+    simpleCtx4.init()
 
-    follower.init()
-    follower1.init()
-*/
   </script>
 </body>
