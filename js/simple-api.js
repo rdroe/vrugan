@@ -145,6 +145,14 @@ const signature = (...args) => {
 const signatureFour = (ps, pe, distanceOut, stopAt) => ({ ps, pe, distanceOut, stopAt })
 
 const signatureFive = (follower, ps, pe, distanceOut, stopAt) => ({ follower, ps, pe, distanceOut, stopAt })
+
+const getCtxFromArgs = (el, args) => {
+    const { follower: existingFollower, ps, pe, distanceOut, stopAt } = signature(...args)
+
+    const { view, surface, follower } = createFollower(el, existingFollower)
+    return { ps, pe, distanceOut, stopAt, view, surface, follower }
+}
+
 export default (el) => {
     let thisVrug
 
@@ -155,11 +163,8 @@ export default (el) => {
 
     return {
         // make a new follower
-        fromBelow: (ps, pe, distanceOut, stopAt) => {
-
-            const { view, surface, follower
-            } = createFollower(el)
-
+        fromBelow: (...args) => {
+            const { ps, pe, distanceOut, stopAt, view, surface, follower } = getCtxFromArgs(el, args)
             const computedStopAt = offElementStopAt(distanceOut, stopAt)
 
             return simpleFollower(
@@ -185,8 +190,9 @@ export default (el) => {
         },
 
         // make a new follower
-        fromTop: (ps, pe, distanceOut, stopAt) => {
-            const { view, surface, follower } = createFollower(el)
+        fromTop: (...args) => {
+
+            const { ps, pe, distanceOut, stopAt, view, surface, follower } = getCtxFromArgs(el, args)
 
             return simpleFollower(
                 view,
@@ -210,12 +216,7 @@ export default (el) => {
         },
         fromLeft: (...args) => {
 
-            const { follower: existingFollower, ps, pe, distanceOut, stopAt } = signature(...args)
-
-            if (existingFollower) {
-                console.log(existingFollower)
-            }
-            const { view, surface, follower } = createFollower(el, existingFollower)
+            const { ps, pe, distanceOut, stopAt, view, surface, follower } = getCtxFromArgs(el, args)
 
             return simpleFollower(
                 view,
@@ -236,8 +237,8 @@ export default (el) => {
                 }
             )
         },
-        fromRight: (ps, pe, distanceOut, stopAt) => {
-            const { view, surface, follower } = createFollower(el)
+        fromRight: (...args) => {
+            const { ps, pe, distanceOut, stopAt, view, surface, follower } = getCtxFromArgs(el, args)
             const computedStopAt = offElementStopAt(distanceOut, stopAt)
             return simpleFollower(
                 view,
