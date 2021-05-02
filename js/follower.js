@@ -3,7 +3,7 @@ import { vrugs, UPDATER, SCROLLER, VERTICAL, HORIZONTAL, assert, asVw, asVh, sho
 import scroller from './scroller.js'
 import optionsMixin from './optionsMixin.js'
 import getEffectiveScrollers, { applicableScrollResult, fireApplicableUpdaters, getEffectiveUpdaters } from './getEffectiveScrollers.js'
-
+import { follower as apiMixin } from './simple-api.js'
 import { scrollToTitle } from './url.js'
 
 let cntr = 0
@@ -30,6 +30,7 @@ export const addDirection = (follower, dir, s, e, ps, pe, senseUnit = 'vw') => {
         .set('parentStart', unitize(ps, senseUnit))
         .set('parentEnd', unitize(pe, senseUnit))
         .listen()
+
     return follower
 }
 
@@ -228,6 +229,7 @@ export default (childEl, el) => {
                 setHash.call(null, ...argz)
             }
         },
-        ...optionsMixin(thisChild)
+        ...optionsMixin(thisChild),
+        ...apiMixin()
     })
 }

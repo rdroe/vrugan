@@ -14,15 +14,14 @@
     import simple from '../js/simple-api.js'
     
     const master = vrug('body')
+    const follower = master.fromBelow(100, 200, 20, 100)
+	  .fromLeft(100, 200, 0, 70)
+	  .fromLeft(201, 300, -60, 270) 
 
-    const simpleCtx = simple(document.querySelector('body')).fromBelow(100, 200)
-      const simpleCtx2 = simple(document.querySelector('body')).fromLeft(201, 300)
-    const simpleCtx3 = simple(document.querySelector('body')).fromTop(301, 400)
-    const simpleCtx4 = simple(document.querySelector('body')).fromRight(401, 500)
-    simpleCtx.init()
-    simpleCtx2.init()
-    simpleCtx3.init()
-    simpleCtx4.init()
+    
+    master.fromLeft(201, 300, 40, 90)
+    master.fromTop(301, 400, 20, 90)
+    master.fromRight(401, 500, 20, 100)
 
   </script>
 </body>
