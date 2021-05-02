@@ -35,9 +35,7 @@ const createScrollerElem = (masterEl, idx) => {
 }
 
 const setIfUndefined = (ref, propName, val, elem = null) => {
-    if (ref[propName]) {
-        console.log(propName, 'pre-existing value', ref[propName], 'challenger:', val, elem)
-    }
+
     if (ref[propName] === '') ref[propName] = val
 }
 
@@ -265,6 +263,42 @@ export default (el) => {
 
 export const follower = () => {
     return {
+        lastScrollerAdded: function() {
+            // @todo: move this out to main lib for followers?.
+            const keys = Array.from(this.scrollers.keys())
+            keys.sort((a, b) => {
+
+                const aN = parseInt(a.split('--')[1])
+                const bN = parseInt(b.split('--')[1])
+
+                if (aN === bN) return 0
+                if (aN > bN) return 1
+                if (bN > aN) return -1
+
+            });
+            const lastScrollerKey = keys[keys.length - 1]
+            const lastScrollerAdded = this.scrollers.get(lastScrollerKey)
+            return lastScrollerAdded
+        },
+        resume: function(ps, pe, howFar) {
+            const lastScrollerAdded = this.lastScrollerAdded()
+            const s = parseInt(lastScrollerAdded.get('end'))
+            const prevPe = lastScrollerAdded.get('parentEnd')
+            if (ps < parseInt(prevPe)) {
+                throw new Error('You can only resume with a master start point greater than the last scroller endpoint')
+            }
+            const dir = lastScrollerAdded.get('responds')
+            // dir, s, e, ps, pe, senseUnit = 'vw'
+            const unit = dir === 'h' ? asVw : asVh
+            const scr = this.senses('v')
+            scr.responds(dir)
+            scr.set('start', unit(s))
+            scr.set('end', unit(s + howFar))
+            scr.set('parentStart', `${ps}vh`)
+            scr.set('parentEnd', `${pe}vh`)
+            scr.listen()
+            return this
+        },
         fromLeft: function(...args) {
             const master = this.getOpt('master')
             return master.fromLeft(this, ...args)

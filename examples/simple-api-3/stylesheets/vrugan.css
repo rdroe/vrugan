@@ -1,0 +1,70 @@
+
+div, main {
+    overflow: hidden;
+    box-sizing: border-box;
+}
+
+html {
+  overflow: hidden;
+  width: 100%;
+  height: 100%;
+  box-sizing: border-box;
+}
+
+body {
+    /*
+  width: 100%;
+  height: 100%;
+  position: fixed;
+  overflow-y: scroll;
+  margin:0;
+   */
+}
+
+.container {
+  width: 100%;
+  position: relative;
+  width: 100%; 
+}
+
+@media(orientation: landscape) {
+  .container{
+      height: 500vw;
+  }
+}
+
+div {
+  box-sizing: border-box;
+}
+
+.stage-view {
+   /* the fixed frame through which we see the scrolling element (which is the "surface").  */
+   pointer-events: none;
+   position: fixed;
+   bottom: 0;
+   left: 0;
+   height: 100vh;
+   width: 100vw;
+   overflow-x: hidden;
+}
+
+.stage-surface {
+    /* The overflow-er; mobile floor for visual elements*/
+    position: absolute;
+    overflow: hidden;
+}
+
+.stage-surface {
+    /* The overflow-er; mobile floor for visual elements*/
+    width: 200%;
+    height: 300%;
+}
+
+.container {
+    font-family: helvetica, arial;
+}
+
+h4 {
+    font-size: 10vh;
+    display: block;
+}

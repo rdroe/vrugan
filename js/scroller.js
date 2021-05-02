@@ -88,7 +88,7 @@ export default (id, senses, childEl, el) => {
         },
         getScrollResult(pos) {
 
-            const doInvert = thisScroller.get('doInvertSensor')
+            // const doInvert = thisScroller.get('doInvertSensor')
             const pe = thisScroller.get('pixels', 'pe')
             const ps = thisScroller.get('pixels', 'ps')
             const ratio = thisScroller.get('ratio')
@@ -142,16 +142,6 @@ export default (id, senses, childEl, el) => {
                 thisScroller.set('isVisible', true)
                 thisScroller.el.style.left = '0px'
             }
-        },
-        width: (w) => {
-            const resp = thisScroller.get('responds')
-            const toOwnUnit = resp === 'h' ? asVw : asVh
-            return thisScroller
-        },
-        height: (h) => {
-            const resp = thisScroller.get('responds')
-            const toOwnUnit = resp === 'h' ? asVw : asVh
-            return thisScroller
         },
         on: (ps, pe) => {
             thisScroller.set('parentStart', unitize(ps, 'vh'))
