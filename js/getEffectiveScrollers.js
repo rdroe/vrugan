@@ -2,15 +2,14 @@ import { IN_RANGE, UPDATER, SCROLLER, LESS, VERTICAL } from './globals.js'
 const GREATEST_LESS_THAN = 'greatestLessThan'
 const LEAST_GREATER_THAN = 'leastGreaterThan'
 
-class MismatchedScrollResults extends Error { }
-
 const gltCompare = ([cham], [chal]) => {
-
+    // true result: means return challenger.
     if (!cham) { return true }
     if (!chal) { return false }
 
     const champScore = cham.getOpt('pixels', 'pe')
     const chalScore = chal.getOpt('pixels', 'pe')
+
     return chalScore > champScore
 }
 
@@ -25,23 +24,17 @@ const lgtCompare = ([cham], [chal]) => {
 
 const conditionallySupplantScroller = (comparFn, pos, champ, challenger) => {
 
-    const challengerPair = [challenger, challenger.getScrollResult(pos)]
+    const challengerPair = [challenger]
 
     const result = comparFn(champ, challengerPair)
-
     if (result) {
-
         return challengerPair
     }
-
     return champ
 }
 
-
 export const getEffectiveUpdaters = (allElementScrollers /*, pos */) => {
-
     const listsByType = {}
-
     const typedList = {
         [GREATEST_LESS_THAN]: [],
         [LEAST_GREATER_THAN]: [],
@@ -49,19 +42,15 @@ export const getEffectiveUpdaters = (allElementScrollers /*, pos */) => {
     }
 
     allElementScrollers.forEach(scr => {
-
         if (scr.get('isActive') !== true) {
             return
         }
-
         if (scr.get('responds') !== 'n/a') return
 
         const type = scr.get('isUpdater') ? UPDATER : SCROLLER
         listsByType[type] = listsByType[type] ? listsByType[type] : typedList
         listsByType[type].inRangeScrollers.push(scr)
-
     })
-
     return listsByType
 }
 
@@ -99,7 +88,6 @@ export default (allElementScrollers, responseDir, position) => {
 
         const champ = listsByType[type][scrollerRelationProperty]
 
-
         const compareFn =
             scrollerRelationProperty === GREATEST_LESS_THAN
                 ? gltCompare
@@ -112,22 +100,22 @@ export default (allElementScrollers, responseDir, position) => {
 }
 
 export const fireApplicableUpdaters = (pos, data) => {
-
     if (!data) return
     data.inRangeScrollers.forEach(scr => scr.update(pos))
-
 }
 
-const augmentScrollResult = (pos, res, [scroller, scrollResult]) => {
-    if (!scroller) return res
-    if (typeof scrollResult !== 'number' || [Infinity, -Infinity].includes(scrollResult)) return res
-
-    if (scroller.get('responds') == VERTICAL) {
+const augmentScrollResult = (pos, res, [scroller]) => {
+    if (!scroller) return
+    if (scroller.get('responds') === VERTICAL) {
         // vertical case; overwrite the undefined scrollTop.
-        if (res.scrollTop === undefined) res.scrollTop = scrollResult
+        if (res.scrollTop === undefined) {
+            res.scrollTop = scroller.getScrollResult(pos)
+        }
     } else {
         // horz case; overwrite the undefined scrollLeft 
-        if (res.scrollLeft === undefined) res.scrollLeft = scrollResult
+        if (res.scrollLeft === undefined) {
+            res.scrollLeft = scroller.getScrollResult(pos)
+        }
     }
     return res
 }
@@ -145,7 +133,8 @@ export const applicableScrollResult = (pos, data /*, prevScrollData */) => {
             }
         })
     }
-    if (results.scrollTop !== undefined && results.scrollLeft !== undefined) { console.log('returning', results); return results }
+    // merge results
+    if (results.scrollTop !== undefined && results.scrollLeft !== undefined) { return results }
 
     augmentScrollResult(pos, results, data[GREATEST_LESS_THAN])
     augmentScrollResult(pos, results, data[LEAST_GREATER_THAN])
