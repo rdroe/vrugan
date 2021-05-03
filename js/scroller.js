@@ -63,7 +63,7 @@ export default (id, senses, childEl, el) => {
 
             thisScroller.set('pixels', 's', s)
             thisScroller.set('pixels', 'e', e)
-
+            //
             const traversable = e - s // for fn, use parent 
             const ratio = proportion(traversable, (pe - ps))
 

@@ -10,7 +10,7 @@ let cntr = 0
 class InvalidUnit extends Error { constructor(...a) { super(...a) } }
 
 const lookUpOrMake = (map, obj, wrapperFn) => {
-
+    // todo: at present, lookup is never succesful in codebase
     if (map.has(obj)) return map.get(obj) // returns previously found element.
     const wrapped = wrapperFn ? wrapperFn(obj) : new Map
     map.set(obj, wrapped) // wraps and sets it
@@ -62,8 +62,10 @@ export default (childEl, el) => {
     const fireScrollers = (pos) => {
 
         const verticalScrollingData = getEffectiveScrollers(thisChild.scrollers, VERTICAL, pos)
+
         const horizontalScrollingData = getEffectiveScrollers(thisChild.scrollers, HORIZONTAL, pos)
         showScrollers(verticalScrollingData, horizontalScrollingData)
+
         const vertResults = applicableScrollResult(pos, verticalScrollingData[SCROLLER])
 
         const horizResults = applicableScrollResult(pos, horizontalScrollingData[SCROLLER])
