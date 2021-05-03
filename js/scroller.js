@@ -54,8 +54,13 @@ export default (id, senses, childEl, el) => {
             thisScroller.set('senseProp', senseProp)
             thisScroller.set('isActive', true)
             if (fn !== undefined) thisScroller.responds('n/a')
-            if (fn !== undefined) return thisScroller.funcListen(fn)
+            if (fn === undefined) return thisScroller.scrollResponder(fn)
+            else return thisScroller.functionResponder(fn)
 
+        },
+        scrollResponder: () => {
+            const ps = thisScroller.get('pixels', 'ps')
+            const pe = thisScroller.get('pixels', 'pe')
             getWrappedEl().activate(top)
             thisScroller.set('senses', senses)
             const s = util(thisScroller.get('start')).toPx()
@@ -79,9 +84,8 @@ export default (id, senses, childEl, el) => {
             }
 
             return getThisScroller()
-
         },
-        funcListen(fn) {
+        functionResponder(fn) {
             thisScroller.set('isUpdater', true)
             thisScroller.set('fn', fn)
             getWrappedEl().activate(top, UPDATER)
