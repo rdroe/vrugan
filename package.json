@@ -12,7 +12,12 @@
     "nodemon": "^2.0.7",
     "serve-static": "^1.14.1"
   },
-  "scripts": {
-    "examples": "nodemon node demo.js"
+    "scripts": {
+	"build": "tsc --project tsconfig.json",
+        "examples": "node demo.js",
+	"mon": "nodemon --ignore './js' --exec \"yarn build && yarn examples\""
+  },
+  "dependencies": {
+    "typescript": "^4.2.4"
   }
 }
