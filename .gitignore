@@ -14,3 +14,9 @@ stanford-corenlp-4.1.0
 *.awcache
 data
 dist
+
+# transitionally, for main.js
+js/*.map
+js/examples
+js/simple-api.js
+js/index.js
