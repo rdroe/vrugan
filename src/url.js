@@ -10,14 +10,10 @@ const state = {
     updated: null
 }
 
-
-
 const getRange = window.getRange = (master, whichStage = state.idx, sOrE = state.startOrEnd) => {
 
-    const arr = [...master.children.values()]
-
     const range = []
-    arr.forEach((ch) => {
+    master.children.forEach((ch) => {
         const asCustomRange = ch.asLinkableRange()
         if (asCustomRange) {
             range[range.length] = asCustomRange

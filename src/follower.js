@@ -103,6 +103,7 @@ export default (childEl, el) => {
         }
     }
 
+
     return Object.assign(thisChild, {
         scrollers: new Map,
         doers: new Map,

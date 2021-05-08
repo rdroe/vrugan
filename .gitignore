@@ -13,5 +13,4 @@ stanford-corenlp-4.1.0
 *.icloud
 *.awcache
 data
-dist
-js
+js/*

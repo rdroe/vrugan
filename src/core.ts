@@ -1,29 +1,40 @@
-
 import { vrugs } from './globals.js'
 import optionsMixin from './optionsMixin.js'
 import follower from './follower.js'
 import simpleApi from './simple-api.js'
 
-const qs = (arg) => {
-    return document.querySelector(arg)
+declare type Vrugan = {
+    scrolls: (s: string) => any
 }
 
-class BadScrollerSelector extends Error {
-    constructor(...args) {
-        super(...args)
+declare global {
+    interface Window {
+        masterResizer: () => void
     }
 }
 
-const vrugFns = (el) => {
+const qs = (arg: string): HTMLElement => {
+
+    const element: HTMLElement | null = document.querySelector(arg)
+    if (element === null) {
+        throw new BadScrollerSelector(arg)
+    }
+    return element
+}
+
+class BadScrollerSelector extends Error {
+    constructor(message: string) {
+        super(message)
+    }
+}
+
+const vrugFns = (el: HTMLElement) => {
 
     return Object.assign({
         el,
         children: new Map,
-        scrolls: (chSel) => {
-            const chEl = typeof chSel === 'string' ? qs(chSel) : chSel
-            if (!chEl) {
-                throw new BadScrollerSelector(chSel)
-            }
+        scrolls: (chSel: string | HTMLElement) => {
+            const chEl: HTMLElement = typeof chSel === 'string' ? qs(chSel) : chSel
 
             const f = follower(chEl, el)
             const thisVrug = vrugs.get(el)
@@ -33,18 +44,15 @@ const vrugFns = (el) => {
         },
         resize: () => {
             const thisVrug = vrugs.get(el)
-            const followers = [...thisVrug.children.values()]
-
-            followers.forEach((foll) => {
+            thisVrug.children.forEach((foll: any) => {
                 foll.reactivate()
             })
-
             if (window.masterResizer) window.masterResizer()
-
         },
-        addScroller: (...args) => {
+
+        addScroller: (sel: string) => {
             const master = vrugs.get(el)
-            return addScroller(master, ...args)
+            return addScroller(master, sel)
         }
     },
         { ...simpleApi(el) },
@@ -52,7 +60,7 @@ const vrugFns = (el) => {
     )
 }
 
-export default (sel) => {
+export default (sel: string) => {
     const el = qs(sel)
     if (!el) throw new BadScrollerSelector(`Main element not found: ${sel}`)
     if (vrugs.has(el)) return vrugs.get(el)
@@ -61,7 +69,7 @@ export default (sel) => {
     return master
 }
 
-const addScroller = (master, sel) => {
+const addScroller = (master: Vrugan, sel: string) => {
     return master
         .scrolls(sel)
 }
