@@ -133,6 +133,7 @@ export const applicableScrollResult = (pos, data /*, prevScrollData */) => {
             }
         })
     }
+
     // merge results
     if (results.scrollTop !== undefined && results.scrollLeft !== undefined) { return results }
 

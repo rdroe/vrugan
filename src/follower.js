@@ -109,13 +109,19 @@ export default (childEl, el) => {
         opts: new Map,
         _limit: (eOrS) => {
             assert(() => ['e', 's'].includes(eOrS), 'arg for limit most be "e" or "s" (for end or start) ')
-            const pes = [...thisChild.scrollers.values()].map(scr => {
-                const propName = eOrS === 'e' ? 'parentEnd' : 'parentStart'
-                return parseInt(scr.get(propName), 10)
+            const propName = eOrS === 'e' ? 'parentEnd' : 'parentStart'
+            const pes = []
+            thisChild.scrollers.forEach((scr) => {
+                const num = parseInt(scr.get(propName), 10)
+                if (num === Infinity || num === -Infinity) { throw new Error('bad limit discovered; ' + eOrS) }
+                pes.push(num)
             })
 
-            return eOrS === 'e' ? Math.max(...pes) : Math.min(...pes)
+            if (pes.length === 0) {
+                throw new Error('Error finding a parent limit.')
+            }
 
+            return eOrS === 'e' ? Math.max(...pes) : Math.min(...pes)
         },
         end: () => {
             return thisChild._limit('e')
@@ -130,8 +136,9 @@ export default (childEl, el) => {
             return null
         },
         nthStage: (n) => {
-            const all = [...thisChild.scrollers.values()]
-            const pes = all.reduce((accum, scr, idx) => {
+            const all = []
+            thisChild.scrollers.forEach(scr => all.push(scr))
+            const pes = all.reduce((accum, scr) => {
                 const strtWithUnits = scr.get('parentStart')
                 const endWithUnits = scr.get('parentEnd')
                 const strt = parseInt(scr.get('parentStart'), 10)
@@ -184,10 +191,8 @@ export default (childEl, el) => {
             handlers[UPDATER]()
         },
         getIdentifier(dir) {
-
             const id = `${dir}--${cntr} `
             cntr += 1
-
             return id
         },
         doerWrapper: () => ({}),
