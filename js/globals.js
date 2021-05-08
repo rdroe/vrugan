@@ -8,7 +8,7 @@ export const GREATER = '>'
 export const IN_RANGE = 'in_range'
 export const UPDATER = 'updater'
 export const SCROLLER = 'scroller'
-console.log('this in globals', this)
+
 
 class Invariant extends Error { constructor(...a) { super(...a) } }
 
