@@ -238,7 +238,7 @@ export default (childEl, el) => {
 
             a.onfocus = (...argz) => {
                 argz[0].preventDefault()
-                setHash.call(null, ...argz)
+                setTimeout(() => setHash.call(null, ...argz), 100)
             }
         },
         ...optionsMixin(thisChild)

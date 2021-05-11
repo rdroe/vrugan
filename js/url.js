@@ -118,6 +118,7 @@ export const scrollToCoord = (target) => {
         }
     }
     window.requestAnimationFrame(animScroll)
+    // document.body.scrollTop = target
 }
 
 export const scrollToTitle = (title) => {
