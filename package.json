@@ -1,6 +1,6 @@
 {
   "name": "vrugan",
-  "version": "0.1.2-nightly-2024.07.26-4fc66",
+  "version": "undefined.undefined.undefined-nightly-2024.07.26-052bc",
   "description": "magical scrolling with javascript",
   "main": "index.js",
   "repository": "git@github.com:rdroe/vrugan.git",
@@ -16,8 +16,8 @@
     "test": "echo tested",
     "build": "yarn install && echo builded"
   },
-  "engines" : { 
-    "node" : ">=16.0.0"
+  "engines": {
+    "node": ">=16.0.0"
   },
   "dependencies": {
     "date-fns": "^3.6.0",
