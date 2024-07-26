@@ -1,6 +1,6 @@
 {
   "name": "vrugan",
-  "version": "0.1.1",
+  "version": "0.1.2-d1e421f--2024-07-26.0",
   "description": "magical scrolling with javascript",
   "main": "index.js",
   "repository": "git@github.com:rdroe/vrugan.git",
