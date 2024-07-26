@@ -27,7 +27,7 @@ jobs:
         node-version: ${{ matrix.node-version }}
     - run: yarn build
     - run: yarn test
-    - name: Touch rando file and add timestamp
-      run: touch rando.txt && echo $(date) >> rando.txt
+    - name: Nightly Version
+      run: bash bump.sh
     - name: Add & Commit
       uses: EndBug/add-and-commit@v9.1.4
