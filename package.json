@@ -12,6 +12,8 @@
   },
   "scripts": {
       "examples": "cd examples && bash build.sh && cd .. && node examples/tmp/demo.js",
-      "clean-examples": "rm -r examples/tmp"
+      "clean-examples": "rm -r examples/tmp",
+      "test": "echo tested",
+      "build": "echo builded"
   }
 }
