@@ -16,6 +16,9 @@
     "test": "echo tested",
     "build": "yarn install && echo builded"
   },
+  "engines" : { 
+    "node" : ">=16.0.0"
+  },
   "dependencies": {
     "date-fns": "^3.6.0",
     "date-fns-tz": "^3.1.3",
