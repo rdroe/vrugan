@@ -28,6 +28,6 @@ jobs:
     - run: yarn build
     - run: yarn test
     - name: Nightly Version
-      run: bash bump.sh
+      run: node parse-semver.mjs
     - name: Add & Commit
       uses: EndBug/add-and-commit@v9.1.4
