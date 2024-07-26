@@ -14,7 +14,7 @@
     "examples": "cd examples && bash build.sh && cd .. && node examples/tmp/demo.js",
     "clean-examples": "rm -r examples/tmp",
     "test": "echo tested",
-    "build": "echo builded"
+    "build": "yarn install && echo builded"
   },
   "dependencies": {
     "date-fns": "^3.6.0",
