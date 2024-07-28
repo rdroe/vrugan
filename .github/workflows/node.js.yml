@@ -31,7 +31,15 @@ jobs:
   nightly-versioning:
     needs: build
     runs-on: ubuntu-latest
+    strategy:
+      matrix:
+        node-version: [18.x]
+        # See supported Node.js release schedule at https://nodejs.org/en/about/releases/
     steps:
+    - name: Use Node.js ${{ matrix.node-version }}
+      uses: actions/setup-node@v3
+      with:
+        node-version: ${{ matrix.node-version }}      
     - name: Nightly Version
       run: node parse-semver.mjs
     - name: Add & Commit
