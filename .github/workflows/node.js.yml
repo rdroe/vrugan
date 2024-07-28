@@ -41,8 +41,10 @@ jobs:
     - name: Use Node.js ${{ matrix.node-version }}
       uses: actions/setup-node@v3
       with:
-        node-version: ${{ matrix.node-version }}      
+        node-version: ${{ matrix.node-version }}   
+    - run: yarn build
     - name: Nightly Version
       run: node parse-semver.mjs
+      working-directory: .
     - name: Add & Commit
       uses: EndBug/add-and-commit@v9.1.4    
