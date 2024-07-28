@@ -30,6 +30,7 @@ jobs:
 
   nightly-versioning:
     needs: build
+    runs-on: ubuntu-latest
     steps:
     - name: Nightly Version
       run: node parse-semver.mjs
