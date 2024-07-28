@@ -27,7 +27,11 @@ jobs:
         node-version: ${{ matrix.node-version }}
     - run: yarn build
     - run: yarn test
+
+  nightly-versioning:
+    needs: build
+    steps:
     - name: Nightly Version
       run: node parse-semver.mjs
     - name: Add & Commit
-      uses: EndBug/add-and-commit@v9.1.4
+      uses: EndBug/add-and-commit@v9.1.4    
