@@ -52,9 +52,9 @@ jobs:
       with:
         path: "."
         isAbsolutePath: false
-        file: "foo.bar"
+        file: "nightly-version.txt"
         content: |
-          Hello
-          World      
+          Nightly Version:
+          $(date +%Y-%m-%d)
     - run: echo "File created"
-    - run: cat foo.bar
+    - run: cat nightly-version.txt
