@@ -48,3 +48,12 @@ jobs:
       working-directory: .
     - name: Add & Commit
       uses: EndBug/add-and-commit@v9.1.4    
+    - name: Create A File
+      uses: 1arp/create-a-file-action@0.4.5
+      with:
+        path: "src"
+        isAbsolutePath: false
+        file: "foo.bar"
+        content: |
+          Hello
+          World      
