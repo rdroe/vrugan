@@ -25,7 +25,6 @@ jobs:
       uses: actions/setup-node@v3
       with:
         node-version: ${{ matrix.node-version }}
-        cache: 'yarn'
     - run: yarn build
     - run: yarn test
 
@@ -51,9 +50,11 @@ jobs:
     - name: Create A File
       uses: 1arp/create-a-file-action@0.4.5
       with:
-        path: "src"
+        path: "."
         isAbsolutePath: false
         file: "foo.bar"
         content: |
           Hello
           World      
+    - run: echo "File created"
+    - run: cat foo.bar
